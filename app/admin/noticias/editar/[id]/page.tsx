@@ -1,13 +1,24 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Save, Eye, ArrowLeft } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Save, Eye, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -20,7 +31,7 @@ const categorias = [
   "Internacional",
 ]
 
-export default function NovaNoticia() {
+export default function EditarNoticia({ params }: { params: { id: string } }) {
   const [formData, setFormData] = useState({
     titulo: "",
     resumo: "",
@@ -29,11 +40,32 @@ export default function NovaNoticia() {
     imagem_url: "",
     status: "rascunho",
   })
-
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [imagePreview, setImagePreview] = useState("")
 
+  useEffect(() => {
+    async function fetchNoticia() {
+      try {
+        const response = await fetch(`/api/noticias/${params.id}`)
+        if (!response.ok) throw new Error("Notícia não encontrada")
+        const data = await response.json()
+        setFormData(data)
+        if (data.imagem_url) {
+          setImagePreview(data.imagem_url)
+        }
+      } catch (error) {
+        console.error("Erro ao buscar notícia:", error)
+        // Opcional: redirecionar ou mostrar mensagem de erro
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchNoticia()
+  }, [params.id])
+
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData(prev => ({ ...prev, [field]: value }))
 
     if (field === "imagem_url") {
       setImagePreview(value)
@@ -41,35 +73,45 @@ export default function NovaNoticia() {
   }
 
   const handleSave = async (status: string) => {
+    setSaving(true)
     try {
-      const noticiaData = { 
-        ...formData, 
+      const noticiaData = {
+        ...formData,
         status,
-        autor: "Admin", // Você pode adicionar um campo de autor depois
-        visualizacoes: 0
       }
-      
-      const response = await fetch('/api/noticias', {
-        method: 'POST',
+
+      const response = await fetch(`/api/noticias/${params.id}`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(noticiaData),
       })
 
       if (!response.ok) {
-        throw new Error('Erro ao salvar notícia')
+        throw new Error("Erro ao salvar notícia")
       }
 
       const savedNoticia = await response.json()
-      console.log('Notícia salva com sucesso:', savedNoticia)
-      
+      console.log("Notícia salva com sucesso:", savedNoticia)
+
       // Redirecionar para a lista de notícias
-      window.location.href = '/admin/noticias'
+      window.location.href = "/admin/noticias"
     } catch (error) {
-      console.error('Erro ao salvar notícia:', error)
-      alert('Erro ao salvar notícia. Tente novamente.')
+      console.error("Erro ao salvar notícia:", error)
+      alert("Erro ao salvar notícia. Tente novamente.")
+    } finally {
+      setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+        <p className="ml-2">Carregando notícia...</p>
+      </div>
+    )
   }
 
   return (
@@ -82,8 +124,10 @@ export default function NovaNoticia() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Nova Notícia</h1>
-          <p className="text-gray-600">Crie uma nova notícia para seu portal</p>
+          <h1 className="text-3xl font-bold text-gray-900">Editar Notícia</h1>
+          <p className="text-gray-600">
+            Modifique os detalhes da notícia abaixo
+          </p>
         </div>
       </div>
 
@@ -101,7 +145,7 @@ export default function NovaNoticia() {
                   id="titulo"
                   placeholder="Digite o título da notícia..."
                   value={formData.titulo}
-                  onChange={(e) => handleInputChange("titulo", e.target.value)}
+                  onChange={e => handleInputChange("titulo", e.target.value)}
                 />
               </div>
 
@@ -112,18 +156,21 @@ export default function NovaNoticia() {
                   placeholder="Escreva um resumo da notícia..."
                   rows={3}
                   value={formData.resumo}
-                  onChange={(e) => handleInputChange("resumo", e.target.value)}
+                  onChange={e => handleInputChange("resumo", e.target.value)}
                 />
               </div>
 
               <div>
                 <Label htmlFor="categoria">Categoria</Label>
-                <Select value={formData.categoria} onValueChange={(value) => handleInputChange("categoria", value)}>
+                <Select
+                  value={formData.categoria}
+                  onValueChange={value => handleInputChange("categoria", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categorias.map((categoria) => (
+                    {categorias.map(categoria => (
                       <SelectItem key={categoria} value={categoria}>
                         {categoria}
                       </SelectItem>
@@ -138,7 +185,9 @@ export default function NovaNoticia() {
                   id="imagem_url"
                   placeholder="https://exemplo.com/imagem.jpg"
                   value={formData.imagem_url}
-                  onChange={(e) => handleInputChange("imagem_url", e.target.value)}
+                  onChange={e =>
+                    handleInputChange("imagem_url", e.target.value)
+                  }
                 />
               </div>
             </CardContent>
@@ -153,7 +202,7 @@ export default function NovaNoticia() {
                 placeholder="Escreva o conteúdo completo da notícia aqui..."
                 rows={15}
                 value={formData.conteudo}
-                onChange={(e) => handleInputChange("conteudo", e.target.value)}
+                onChange={e => handleInputChange("conteudo", e.target.value)}
               />
             </CardContent>
           </Card>
@@ -169,17 +218,28 @@ export default function NovaNoticia() {
               <Button
                 className="w-full"
                 onClick={() => handleSave("publicado")}
-                disabled={!formData.titulo || !formData.conteudo}
+                disabled={!formData.titulo || !formData.conteudo || saving}
               >
-                <Save className="w-4 h-4 mr-2" />
-                Publicar Notícia
+                {saving ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4 mr-2" />
+                )}
+                Salvar Alterações
               </Button>
-              <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>
-                Salvar Rascunho
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleSave("rascunho")}
+                disabled={saving}
+              >
+                Salvar como Rascunho
               </Button>
-              <Button variant="outline" className="w-full">
-                <Eye className="w-4 h-4 mr-2" />
-                Visualizar
+              <Button variant="outline" className="w-full" asChild>
+                <Link href={`/noticia/${params.id}`} target="_blank">
+                  <Eye className="w-4 h-4 mr-2" />
+                  Visualizar
+                </Link>
               </Button>
             </CardContent>
           </Card>

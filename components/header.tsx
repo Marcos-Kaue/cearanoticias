@@ -14,8 +14,6 @@ export default function Header() {
     { label: "Política", href: "/categoria/politica" },
     { label: "Economia", href: "/categoria/economia" },
     { label: "Esportes", href: "/categoria/esportes" },
-    { label: "Tecnologia", href: "/categoria/tecnologia" },
-    { label: "Saúde", href: "/categoria/saude" },
   ]
 
   return (
