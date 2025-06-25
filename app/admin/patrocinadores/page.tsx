@@ -1,0 +1,238 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { Plus, Edit, Trash2, ExternalLink } from "lucide-react"
+import Image from "next/image"
+import { Patrocinador } from "@/lib/supabase"
+
+export default function AdminPatrocinadores() {
+  const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])
+  const [loading, setLoading] = useState(true)
+  const [formData, setFormData] = useState({
+    nome: "",
+    logo_url: "",
+    link_site: "",
+    ativo: true,
+    ordem_exibicao: 0,
+  })
+
+  // Carregar patrocinadores
+  const loadPatrocinadores = async () => {
+    try {
+      const response = await fetch('/api/patrocinadores')
+      if (response.ok) {
+        const data = await response.json()
+        setPatrocinadores(data)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar patrocinadores:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadPatrocinadores()
+  }, [])
+
+  const handleEdit = (patrocinador: Patrocinador) => {
+    setFormData(patrocinador)
+    setEditingId(patrocinador.id || null)
+    setShowForm(true)
+  }
+
+  const handleSave = async () => {
+    try {
+      const url = editingId ? `/api/patrocinadores/${editingId}` : '/api/patrocinadores'
+      const method = editingId ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar patrocinador')
+      }
+
+      await loadPatrocinadores() // Recarregar lista
+      setShowForm(false)
+      setEditingId(null)
+      setFormData({ nome: "", logo_url: "", link_site: "", ativo: true, ordem_exibicao: 0 })
+    } catch (error) {
+      console.error('Erro ao salvar patrocinador:', error)
+      alert('Erro ao salvar patrocinador. Tente novamente.')
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Tem certeza que deseja deletar este patrocinador?')) return
+    
+    try {
+      const response = await fetch(`/api/patrocinadores/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao deletar patrocinador')
+      }
+
+      await loadPatrocinadores() // Recarregar lista
+    } catch (error) {
+      console.error('Erro ao deletar patrocinador:', error)
+      alert('Erro ao deletar patrocinador. Tente novamente.')
+    }
+  }
+
+  const handleCancel = () => {
+    setShowForm(false)
+    setEditingId(null)
+    setFormData({ nome: "", logo_url: "", link_site: "", ativo: true, ordem_exibicao: 0 })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Patrocinadores</h1>
+          <p className="text-gray-600">Gerencie os patrocinadores do seu portal</p>
+        </div>
+        <Button onClick={() => setShowForm(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Patrocinador
+        </Button>
+      </div>
+
+      {/* Formulário */}
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{editingId ? "Editar" : "Novo"} Patrocinador</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="nome">Nome do Patrocinador</Label>
+                <Input
+                  id="nome"
+                  value={formData.nome}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, nome: e.target.value }))}
+                  placeholder="Nome da empresa"
+                />
+              </div>
+              <div>
+                <Label htmlFor="link_site">Site</Label>
+                <Input
+                  id="link_site"
+                  value={formData.link_site}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, link_site: e.target.value }))}
+                  placeholder="https://exemplo.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="logo_url">URL do Logo</Label>
+              <Input
+                id="logo_url"
+                value={formData.logo_url}
+                onChange={(e) => setFormData((prev) => ({ ...prev, logo_url: e.target.value }))}
+                placeholder="https://exemplo.com/logo.png"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="ativo"
+                checked={formData.ativo}
+                onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, ativo: checked }))}
+              />
+              <Label htmlFor="ativo">Patrocinador ativo</Label>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={handleSave}>{editingId ? "Atualizar" : "Salvar"}</Button>
+              <Button variant="outline" onClick={handleCancel}>
+                Cancelar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Lista de patrocinadores */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Patrocinadores Cadastrados</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8">
+              <p>Carregando patrocinadores...</p>
+            </div>
+          ) : patrocinadores.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Nenhum patrocinador cadastrado ainda.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {patrocinadores.map((patrocinador) => (
+                <div key={patrocinador.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={patrocinador.logo_url || "/placeholder.svg"}
+                      alt={patrocinador.nome}
+                      width={80}
+                      height={40}
+                      className="h-10 w-20 object-contain border rounded"
+                    />
+                    <div>
+                      <h3 className="font-medium">{patrocinador.nome}</h3>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <ExternalLink className="w-3 h-3" />
+                        <a
+                          href={patrocinador.link_site}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-blue-600"
+                        >
+                          {patrocinador.link_site}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        patrocinador.ativo ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {patrocinador.ativo ? "Ativo" : "Inativo"}
+                    </span>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(patrocinador)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(patrocinador.id || 0)}>
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
