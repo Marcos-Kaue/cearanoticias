@@ -17,12 +17,10 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll: () => {
-          return request.cookies
-            ? Object.entries(request.cookies).map(([name, cookie]) => ({
-                name,
-                value: cookie.value,
-              }))
-            : []
+          return Object.entries(request.cookies).map(([name, cookie]) => ({
+            name,
+            value: typeof cookie === 'string' ? cookie : cookie.value,
+          }))
         },
         setAll: () => {}, // No middleware, não precisa setar cookies
       },
