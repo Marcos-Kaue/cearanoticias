@@ -23,11 +23,6 @@ const menuItems = [
     icon: Users,
   },
   {
-    title: "Anúncios",
-    href: "/admin/anuncios",
-    icon: ImageIcon,
-  },
-  {
     title: "Categorias",
     href: "/admin/categorias",
     icon: Tag,

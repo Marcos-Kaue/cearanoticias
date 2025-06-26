@@ -6,13 +6,28 @@ import { RelativeTime } from "@/components/relative-time"
 
 async function getNoticia(id: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-  const res = await fetch(`${baseUrl}/api/noticias/${id}`, { cache: "no-store" })
+  const res = await fetch(`${baseUrl}/api/noticias/${id}`, { next: { revalidate: 60 } })
   if (!res.ok) return null
   return await res.json()
 }
 
+async function getPatrocinadores() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { next: { revalidate: 60 } })
+    if (!res.ok) return []
+    const data = await res.json()
+    return data
+  } catch {
+    return []
+  }
+}
+
 export default async function NoticiaPage({ params }: { params: { id: string } }) {
-  const noticia = await getNoticia(params.id)
+  const [noticia, patrocinadores] = await Promise.all([
+    getNoticia(params.id),
+    getPatrocinadores()
+  ])
 
   if (!noticia) {
     notFound()
@@ -21,9 +36,21 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
   // Dividir o conteúdo em parágrafos para inserir anúncios
   const paragrafos = noticia.conteudo ? noticia.conteudo.split("\n\n") : []
 
+  // Função para pegar patrocinador alternado
+  function getPatrocinadorAlternado(index: number) {
+    if (!patrocinadores.length) return null
+    return patrocinadores[index % patrocinadores.length]
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
+        {/* Botão de voltar para a página inicial */}
+        <div className="mb-4">
+          <a href="/" className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors font-medium">
+            ← Voltar para a página inicial
+          </a>
+        </div>
         {/* Cabeçalho da notícia */}
         <header className="mb-8">
           <div className="flex items-center gap-2 mb-4">
@@ -49,12 +76,21 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
 
         {/* Anúncio banner superior */}
         <div className="mb-8">
-          <AdBanner
-            imageUrl="/placeholder.svg?height=100&width=728"
-            link="#"
-            title="Patrocinador Premium"
-            className="w-full"
-          />
+          {patrocinadores.length > 0 ? (
+            <AdBanner
+              imageUrl={getPatrocinadorAlternado(0).logo_url || "/placeholder.svg"}
+              link={getPatrocinadorAlternado(0).link_site || "#"}
+              title={getPatrocinadorAlternado(0).nome}
+              className="w-full"
+            />
+          ) : (
+            <AdBanner
+              imageUrl="/placeholder.svg?height=100&width=728"
+              link="#"
+              title="Patrocinador Premium"
+              className="w-full"
+            />
+          )}
         </div>
 
         {/* Conteúdo da notícia */}
@@ -67,12 +103,21 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
                   {/* Inserir anúncio após o segundo parágrafo */}
                   {index === 1 && (
                     <div className="my-8">
-                      <AdBanner
-                        imageUrl="/placeholder.svg?height=150&width=728"
-                        link="#"
-                        title="Anúncio Integrado"
-                        className="w-full"
-                      />
+                      {patrocinadores.length > 0 ? (
+                        <AdBanner
+                          imageUrl={getPatrocinadorAlternado(1).logo_url || "/placeholder.svg"}
+                          link={getPatrocinadorAlternado(1).link_site || "#"}
+                          title={getPatrocinadorAlternado(1).nome}
+                          className="w-full"
+                        />
+                      ) : (
+                        <AdBanner
+                          imageUrl="/placeholder.svg?height=150&width=728"
+                          link="#"
+                          title="Anúncio Integrado"
+                          className="w-full"
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -86,12 +131,21 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               <Card>
                 <CardContent className="p-4">
                   <h3 className="font-bold mb-4 text-gray-900">Publicidade</h3>
-                  <AdBanner
-                    imageUrl="/placeholder.svg?height=250&width=300"
-                    link="#"
-                    title="Anúncio Lateral"
-                    className="w-full"
-                  />
+                  {patrocinadores.length > 0 ? (
+                    <AdBanner
+                      imageUrl={getPatrocinadorAlternado(2).logo_url || "/placeholder.svg"}
+                      link={getPatrocinadorAlternado(2).link_site || "#"}
+                      title={getPatrocinadorAlternado(2).nome}
+                      className="w-full"
+                    />
+                  ) : (
+                    <AdBanner
+                      imageUrl="/placeholder.svg?height=250&width=300"
+                      link="#"
+                      title="Anúncio Lateral"
+                      className="w-full"
+                    />
+                  )}
                 </CardContent>
               </Card>
             </div>

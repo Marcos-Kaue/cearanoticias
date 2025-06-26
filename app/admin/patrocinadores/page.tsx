@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Plus, Edit, Trash2, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { Patrocinador } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 
 export default function AdminPatrocinadores() {
   const [showForm, setShowForm] = useState(false)
@@ -100,6 +101,30 @@ export default function AdminPatrocinadores() {
     setFormData({ nome: "", logo_url: "", link_site: "", ativo: true, ordem_exibicao: 0 })
   }
 
+  // Função para upload de imagem para o Supabase Storage (imagens)
+  async function uploadImagemPatrocinador(file: File): Promise<string | null> {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    const { data, error } = await supabase.storage.from('imagens').upload(fileName, file)
+    if (error) {
+      alert('Erro ao fazer upload da imagem!')
+      return null
+    }
+    // Gerar URL pública
+    const { data: publicUrlData } = supabase.storage.from('imagens').getPublicUrl(fileName)
+    return publicUrlData?.publicUrl || null
+  }
+
+  // Handler para upload de imagem do logo
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = await uploadImagemPatrocinador(file)
+    if (url) {
+      setFormData((prev) => ({ ...prev, logo_url: url }))
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -107,10 +132,6 @@ export default function AdminPatrocinadores() {
           <h1 className="text-3xl font-bold text-gray-900">Patrocinadores</h1>
           <p className="text-gray-600">Gerencie os patrocinadores do seu portal</p>
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Patrocinador
-        </Button>
       </div>
 
       {/* Formulário */}
@@ -142,13 +163,26 @@ export default function AdminPatrocinadores() {
             </div>
 
             <div>
-              <Label htmlFor="logo_url">URL do Logo</Label>
+              <Label htmlFor="logo_url">Logo do Patrocinador</Label>
+              <Input
+                id="logo_upload"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+              />
               <Input
                 id="logo_url"
+                type="text"
                 value={formData.logo_url}
                 onChange={(e) => setFormData((prev) => ({ ...prev, logo_url: e.target.value }))}
-                placeholder="https://exemplo.com/logo.png"
+                placeholder="URL do logo (preenchido automaticamente ao fazer upload)"
+                className="mt-2"
               />
+              {formData.logo_url && (
+                <div className="mt-2">
+                  <img src={formData.logo_url} alt="Preview" className="h-20 rounded border" />
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -233,6 +267,14 @@ export default function AdminPatrocinadores() {
           )}
         </CardContent>
       </Card>
+
+      {/* Botão Novo Patrocinador centralizado abaixo da lista */}
+      <div className="flex justify-center mt-6">
+        <Button onClick={() => setShowForm(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Patrocinador
+        </Button>
+      </div>
     </div>
   )
 }

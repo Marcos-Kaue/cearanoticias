@@ -34,24 +34,16 @@ async function getNoticias(): Promise<Noticia[]> {
   }
 }
 
-// Função para buscar patrocinador ativo (mock se não houver)
-async function getAd() {
+// Função para buscar patrocinadores ativos
+async function getPatrocinadores() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
     const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { cache: "no-store" })
-    if (!res.ok) return null
+    if (!res.ok) return []
     const data = await res.json()
-    if (data && data.length > 0) {
-      const patrocinador = data[0]
-      return {
-        imageUrl: patrocinador.logo_url || "/placeholder.svg",
-        link: patrocinador.link_site || "#",
-        title: `Patrocinado por ${patrocinador.nome}`,
-      }
-    }
-    return null
+    return data
   } catch {
-    return null
+    return []
   }
 }
 
@@ -63,11 +55,7 @@ export const metadata = {
 
 export default async function HomePage() {
   const noticias = await getNoticias()
-  const ad = await getAd() || {
-    imageUrl: "/placeholder-logo.png",
-    link: "https://www.exemplo.com",
-    title: "Anuncie aqui e alcance milhares de leitores!",
-  }
+  const patrocinadores = await getPatrocinadores()
 
   if (!noticias || noticias.length === 0) {
     return (
@@ -84,6 +72,15 @@ export default async function HomePage() {
 
   const noticiaDestaque = noticias[0]
   const outrasNoticias = noticias.slice(1)
+
+  // Função para pegar patrocinador alternado (pode ser random ou por index)
+  function getPatrocinadorParaBanner() {
+    if (!patrocinadores.length) return null
+    // Alternar por data/hora ou por index, aqui usaremos o primeiro
+    return patrocinadores[0]
+  }
+
+  const patrocinadorBanner = getPatrocinadorParaBanner()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -119,8 +116,23 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* Banner de Anúncio (modelo G1) */}
-      <AdBanner imageUrl={ad.imageUrl} link={ad.link} title={ad.title} />
+      {/* Banner de Publicidade com patrocinador ativo */}
+      <section className="mb-12">
+        <div className="text-xs text-gray-400 mb-1 text-center tracking-widest">PUBLICIDADE</div>
+        {patrocinadorBanner ? (
+          <AdBanner
+            imageUrl={patrocinadorBanner.logo_url || "/placeholder.svg"}
+            link={patrocinadorBanner.link_site || "#"}
+            title={patrocinadorBanner.nome}
+          />
+        ) : (
+          <AdBanner
+            imageUrl="/placeholder-logo.png"
+            link="https://www.exemplo.com"
+            title="Anuncie aqui e alcance milhares de leitores!"
+          />
+        )}
+      </section>
 
       {/* Outras Notícias */}
       {outrasNoticias.length > 0 && (

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save, Eye, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { supabase } from "@/lib/supabase"
 
 const categorias = [
   "Política",
@@ -19,6 +20,20 @@ const categorias = [
   "Cultura",
   "Internacional",
 ]
+
+// Função para upload de imagem para o Supabase Storage (imagens)
+async function uploadImagemNoticia(file: File): Promise<string | null> {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+  const { data, error } = await supabase.storage.from('imagens').upload(fileName, file)
+  if (error) {
+    alert('Erro ao fazer upload da imagem!')
+    return null
+  }
+  // Gerar URL pública
+  const { data: publicUrlData } = supabase.storage.from('imagens').getPublicUrl(fileName)
+  return publicUrlData?.publicUrl || null
+}
 
 export default function NovaNoticia() {
   const [formData, setFormData] = useState({
@@ -37,6 +52,17 @@ export default function NovaNoticia() {
 
     if (field === "imagem_url") {
       setImagePreview(value)
+    }
+  }
+
+  // Novo handler para upload de imagem
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = await uploadImagemNoticia(file)
+    if (url) {
+      setFormData((prev) => ({ ...prev, imagem_url: url }))
+      setImagePreview(url)
     }
   }
 
@@ -133,13 +159,29 @@ export default function NovaNoticia() {
               </div>
 
               <div>
-                <Label htmlFor="imagem_url">URL da Imagem</Label>
+                <Label htmlFor="imagem_url">Imagem da Notícia</Label>
+                <Input
+                  id="imagem_upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
                 <Input
                   id="imagem_url"
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  type="text"
                   value={formData.imagem_url}
-                  onChange={(e) => handleInputChange("imagem_url", e.target.value)}
+                  onChange={(e) => {
+                    setFormData((prev) => ({ ...prev, imagem_url: e.target.value }))
+                    setImagePreview(e.target.value)
+                  }}
+                  placeholder="URL da imagem (preenchido automaticamente ao fazer upload)"
+                  className="mt-2"
                 />
+                {formData.imagem_url && (
+                  <div className="mt-2">
+                    <img src={formData.imagem_url} alt="Preview" className="h-20 rounded border" />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -174,9 +216,7 @@ export default function NovaNoticia() {
                 <Save className="w-4 h-4 mr-2" />
                 Publicar Notícia
               </Button>
-              <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>
-                Salvar Rascunho
-              </Button>
+              <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>Salvar Rascunho</Button>
               <Button variant="outline" className="w-full">
                 <Eye className="w-4 h-4 mr-2" />
                 Visualizar
