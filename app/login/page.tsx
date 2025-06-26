@@ -30,6 +30,16 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
     } else if (data && data.user && data.session) {
+      // Salva a sessão como cookie no server antes de redirecionar
+      await fetch('/api/auth/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        }),
+      });
+      // Força o redirecionamento e recarregamento da página
       window.location.href = "/admin"
     } else {
       setError("Não foi possível fazer login. Tente novamente.")
