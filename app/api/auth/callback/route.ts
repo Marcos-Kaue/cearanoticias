@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
           set: (name, value, options) => {
             response.cookies.set({ name, value, ...options })
           },
+          get: () => undefined,
         },
       }
     )
@@ -30,11 +31,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error("Erro ao setar sessão Supabase:", error)
+      return NextResponse.json({ error: error.message || String(error) }, { status: 500 })
     }
 
     return response
   } catch (e) {
-    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 })
+    console.error("Erro no /api/auth/callback:", e)
+    return NextResponse.json({ error: (e && typeof e === 'object' && 'message' in e) ? e.message : String(e) || 'Erro interno no servidor' }, { status: 500 })
   }
 } 
