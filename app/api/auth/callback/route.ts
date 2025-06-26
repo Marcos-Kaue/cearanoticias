@@ -17,10 +17,12 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          set: (name, value, options) => {
-            response.cookies.set({ name, value, ...options })
+          getAll: () => [],
+          setAll: (cookies) => {
+            cookies.forEach(({ name, value, options }) => {
+              response.cookies.set({ name, value, ...options })
+            })
           },
-          get: () => undefined,
         },
       }
     )
