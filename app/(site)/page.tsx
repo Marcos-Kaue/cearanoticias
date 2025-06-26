@@ -104,9 +104,11 @@ export default async function HomePage() {
               <h1 className="text-2xl md:text-4xl font-extrabold mb-2 drop-shadow-lg">
                 {noticiaDestaque.titulo}
               </h1>
-              <p className="text-base md:text-lg font-medium mb-2 drop-shadow">
-                {noticiaDestaque.resumo}
-              </p>
+              {noticiaDestaque.titulo.length <= 60 && (
+                <p className="text-base md:text-lg font-medium mb-2 drop-shadow line-clamp-2">
+                  {noticiaDestaque.resumo}
+                </p>
+              )}
               <RelativeTime
                 dateString={noticiaDestaque.created_at}
                 className="text-gray-200 text-xs"

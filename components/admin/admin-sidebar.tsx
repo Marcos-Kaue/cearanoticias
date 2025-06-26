@@ -18,6 +18,11 @@ const menuItems = [
     icon: FileText,
   },
   {
+    title: "Notícias Enviadas",
+    href: "/admin/noticias-enviadas",
+    icon: FileText,
+  },
+  {
     title: "Patrocinadores",
     href: "/admin/patrocinadores",
     icon: Users,

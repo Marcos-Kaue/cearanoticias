@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -8,28 +8,36 @@ import { Menu, X, Search } from "lucide-react"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showAnim, setShowAnim] = useState(false)
 
   const menuItems = [
     { label: "Início", href: "/" },
     { label: "Política", href: "/categoria/politica" },
     { label: "Economia", href: "/categoria/economia" },
     { label: "Esportes", href: "/categoria/esportes" },
+    { label: "Envie sua notícia", href: "/envie-sua-noticia" },
   ]
 
+  useEffect(() => {
+    setShowAnim(true)
+  }, [])
+
   return (
-    <header className="bg-red-600 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-2">
+    <header className={`bg-red-600 shadow-md sticky top-0 z-50 transition-all duration-700 ${showAnim ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`} style={{willChange: 'opacity, transform'}}>
+      <div className="w-full pl-2 pr-2">
         {/* Top bar */}
         <div className="flex items-center justify-between py-2">
           <Link href="/" className="flex items-center gap-1">
-            <Image
-              src="/logo.png"
-              alt="Ceará No Grau Logo"
-              width={50}
-              height={50}
-              className="w-20 h-20 md:w-20 md:h-20 rounded-lg object-cover"
-            />
-            <div className="flex flex-col">
+            <span className={`inline-block transition-all duration-700 ${showAnim ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`} style={{willChange: 'opacity, transform'}}>
+              <Image
+                src="/logo.png"
+                alt="Ceará No Grau Logo"
+                width={50}
+                height={50}
+                className="w-20 h-20 md:w-20 md:h-20 rounded-lg object-cover"
+              />
+            </span>
+            <div className={`flex flex-col transition-all duration-700 delay-150 ${showAnim ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`} style={{willChange: 'opacity, transform'}}>
               <span className="text-lg md:text-2xl font-bold text-white">CEARÁ NO GRAU</span>
               <span className="text-xs text-red-100">Portal de Notícias</span>
             </div>

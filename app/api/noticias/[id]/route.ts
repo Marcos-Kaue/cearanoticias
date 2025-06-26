@@ -28,7 +28,7 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    
+
     const { data, error } = await supabase
       .from('noticias')
       .update({
@@ -37,9 +37,9 @@ export async function PUT(
       })
       .eq('id', params.id)
       .select()
-    
+
     if (error) throw error
-    
+
     return NextResponse.json(data[0])
   } catch (error) {
     return NextResponse.json({ error: 'Erro ao atualizar notícia' }, { status: 500 })

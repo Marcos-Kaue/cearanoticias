@@ -3,6 +3,10 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import AdBanner from "@/components/ad-banner"
 import { RelativeTime } from "@/components/relative-time"
+import Facebook from "lucide-react/dist/esm/icons/facebook"
+import Instagram from "lucide-react/dist/esm/icons/instagram"
+import Whatsapp from "lucide-react/dist/esm/icons/whatsapp"
+import React from "react"
 
 async function getNoticia(id: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
@@ -42,6 +46,13 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
     return patrocinadores[index % patrocinadores.length]
   }
 
+  // Função para montar os links de compartilhamento
+  const shareUrl = typeof window !== 'undefined'
+    ? window.location.href
+    : `${process.env.NEXT_PUBLIC_SITE_URL || "https://cearanoticias.com"}/noticia/${noticia.id}`
+  const shareText = `${noticia.titulo} - ${shareUrl}`
+  const instagramUser = "seuusuario" // Troque pelo usuário do portal
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
@@ -58,6 +69,27 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
             <RelativeTime dateString={noticia.created_at} className="text-gray-500" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">{noticia.titulo}</h1>
+          {/* Botão de compartilhamento WhatsApp */}
+          <div className="flex gap-3 mb-4">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(noticia.titulo + ' - ' + (typeof window !== 'undefined' ? window.location.href : (process.env.NEXT_PUBLIC_SITE_URL || 'https://cearanoticias.com') + '/noticia/' + noticia.id))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full p-2 flex items-center justify-center"
+              title="Compartilhar no WhatsApp"
+            >
+              <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8 object-contain" />
+            </a>
+            <a
+              href="https://instagram.com/SEU_USUARIO" // Troque pelo usuário real
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full p-2 flex items-center justify-center"
+              title="Ver nosso Instagram"
+            >
+              <img src="/instagram.png" alt="Instagram" className="w-8 h-8 object-contain" />
+            </a>
+          </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>
         </header>
 
