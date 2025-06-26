@@ -25,29 +25,10 @@ export default function LoginPage() {
       email,
       password,
     })
-    console.log('LOGIN RESULT:', error, data)
-
     if (error) {
-      setError(error.message)
+      setError("E-mail ou senha inválidos.")
     } else if (data && data.user && data.session) {
-      // Salva a sessão como cookie no server antes de redirecionar
-      const resp = await fetch('/api/auth/callback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
-        }),
-      });
-      if (!resp.ok) {
-        const err = await resp.json();
-        setError(err.error || "Erro ao salvar sessão.");
-        setLoading(false);
-        return;
-      }
-      setTimeout(() => {
-        window.location.href = "/admin";
-      }, 200);
+      router.push("/admin")
     } else {
       setError("Não foi possível fazer login. Tente novamente.")
     }
