@@ -9,12 +9,15 @@ import { Plus, Search, Edit, Trash2, Eye, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Noticia } from "@/lib/supabase"
+import { useProtectAdmin } from "@/hooks/use-protect-admin"
 
 export default function AdminNoticias() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("Todos")
   const [noticias, setNoticias] = useState<Noticia[]>([])
   const [loading, setLoading] = useState(true)
+
+  useProtectAdmin()
 
   // Carregar notícias
   const loadNoticias = async () => {

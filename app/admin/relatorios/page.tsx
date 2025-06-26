@@ -1,4 +1,7 @@
+import { useProtectAdmin } from "@/hooks/use-protect-admin";
+
 export default function AdminRelatorios() {
+  useProtectAdmin();
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-4">Relatórios</h1>
