@@ -31,7 +31,7 @@ export default function LoginPage() {
       setError(error.message)
     } else if (data && data.user && data.session) {
       // Salva a sessão como cookie no server antes de redirecionar
-      await fetch('/api/auth/callback', {
+      const resp = await fetch('/api/auth/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -39,8 +39,15 @@ export default function LoginPage() {
           refresh_token: data.session.refresh_token,
         }),
       });
-      // Força o redirecionamento e recarregamento da página
-      window.location.href = "/admin"
+      if (!resp.ok) {
+        const err = await resp.json();
+        setError(err.error || "Erro ao salvar sessão.");
+        setLoading(false);
+        return;
+      }
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 200);
     } else {
       setError("Não foi possível fazer login. Tente novamente.")
     }
