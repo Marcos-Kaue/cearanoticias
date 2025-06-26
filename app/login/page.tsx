@@ -29,8 +29,10 @@ export default function LoginPage() {
 
     if (error) {
       setError(error.message)
+    } else if (data && data.user && data.session) {
+      window.location.href = "/admin"
     } else {
-      router.push("/admin")
+      setError("Não foi possível fazer login. Tente novamente.")
     }
     setLoading(false)
   }
