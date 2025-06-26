@@ -11,6 +11,7 @@ interface Noticia {
   imagem_url: string | null
   created_at: string
   categoria: string
+  visualizacoes?: number
 }
 
 async function getNoticias(): Promise<Noticia[]> {
@@ -53,7 +54,8 @@ export const metadata = {
   description: 'Seu portal de notícias do Ceará atualizado',
 }
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams?: { q?: string } }) {
+  const q = searchParams?.q || ""
   const noticias = await getNoticias()
   const patrocinadores = await getPatrocinadores()
 
@@ -70,17 +72,55 @@ export default async function HomePage() {
     )
   }
 
-  const noticiaDestaque = noticias[0]
-  const outrasNoticias = noticias.slice(1)
-
-  // Função para pegar patrocinador alternado (pode ser random ou por index)
-  function getPatrocinadorParaBanner() {
-    if (!patrocinadores.length) return null
-    // Alternar por data/hora ou por index, aqui usaremos o primeiro
-    return patrocinadores[0]
+  // Filtrar notícias pelo termo de busca, se houver
+  let noticiasFiltradas = noticias
+  if (q && q.trim()) {
+    const termo = q.trim().toLowerCase()
+    noticiasFiltradas = noticias.filter(n =>
+      n.titulo.toLowerCase().includes(termo) ||
+      n.resumo.toLowerCase().includes(termo) ||
+      n.categoria.toLowerCase().includes(termo)
+    )
   }
 
-  const patrocinadorBanner = getPatrocinadorParaBanner()
+  if (!noticiasFiltradas.length) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          Nenhuma notícia encontrada
+        </h2>
+        <p className="text-gray-600">
+          Nenhuma notícia corresponde ao termo buscado.
+        </p>
+      </div>
+    )
+  }
+
+  const noticiaDestaque = noticiasFiltradas[0]
+  const outrasNoticias = noticiasFiltradas.slice(1)
+
+  // Função para embaralhar patrocinadores
+  function shuffleArray(array: any[]) {
+    const arr = [...array]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  }
+
+  const patrocinadoresAleatorios = shuffleArray(patrocinadores)
+  const patrocinadorBanner = patrocinadoresAleatorios[0] || null
+
+  // Ranking de notícias mais lidas (top 3)
+  const rankingMaisLidas = [...noticias]
+    .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
+    .slice(0, 3)
+
+  // Ranking compacto (top 3)
+  const rankingMaisLidasCompacto = [...noticias]
+    .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
+    .slice(0, 3)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -118,7 +158,7 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* Banner de Publicidade com patrocinador ativo */}
+      {/* Banner de Publicidade com patrocinador aleatório */}
       <section className="mb-12">
         <div className="text-xs text-gray-400 mb-1 text-center tracking-widest">PUBLICIDADE</div>
         {patrocinadorBanner ? (
@@ -134,6 +174,22 @@ export default async function HomePage() {
             title="Anuncie aqui e alcance milhares de leitores!"
           />
         )}
+      </section>
+
+      {/* Ranking de Notícias Mais Lidas */}
+      <section className="mb-12">
+        <h2 className="text-xl font-bold mb-4 text-gray-900">Mais Lidas</h2>
+        <ol className="space-y-3">
+          {rankingMaisLidas.map((noticia, idx) => (
+            <li key={noticia.id} className="flex items-center gap-3 bg-gray-50 rounded p-3 hover:bg-gray-100 transition">
+              <span className="text-lg font-bold text-red-600 w-6 text-center">{idx + 1}</span>
+              <Link href={`/noticia/${noticia.id}`} className="flex-1 font-medium text-gray-900 hover:text-red-700 transition-colors">
+                {noticia.titulo}
+              </Link>
+              <span className="text-xs text-gray-500 whitespace-nowrap">{noticia.visualizacoes || 0} visualizações</span>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* Outras Notícias */}

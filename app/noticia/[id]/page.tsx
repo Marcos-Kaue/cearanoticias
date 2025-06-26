@@ -37,13 +37,24 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
     notFound()
   }
 
+  // Embaralhar patrocinadores para garantir aleatoriedade em cada local
+  function shuffleArray(array: any[]) {
+    const arr = [...array]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  }
+  const patrocinadoresAleatorios = shuffleArray(patrocinadores)
+
   // Dividir o conteúdo em parágrafos para inserir anúncios
   const paragrafos = noticia.conteudo ? noticia.conteudo.split("\n\n") : []
 
-  // Função para pegar patrocinador alternado
-  function getPatrocinadorAlternado(index: number) {
-    if (!patrocinadores.length) return null
-    return patrocinadores[index % patrocinadores.length]
+  // Função para pegar patrocinador aleatório para cada posição
+  function getPatrocinadorAleatorio(index: number) {
+    if (!patrocinadoresAleatorios.length) return null
+    return patrocinadoresAleatorios[index % patrocinadoresAleatorios.length]
   }
 
   // Função para montar os links de compartilhamento
@@ -81,7 +92,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8 object-contain" />
             </a>
             <a
-              href="https://instagram.com/SEU_USUARIO" // Troque pelo usuário real
+              href="https://www.instagram.com/cearanograuce?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full p-2 flex items-center justify-center"
@@ -108,11 +119,11 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
 
         {/* Anúncio banner superior */}
         <div className="mb-8">
-          {patrocinadores.length > 0 ? (
+          {patrocinadoresAleatorios.length > 0 ? (
             <AdBanner
-              imageUrl={getPatrocinadorAlternado(0).logo_url || "/placeholder.svg"}
-              link={getPatrocinadorAlternado(0).link_site || "#"}
-              title={getPatrocinadorAlternado(0).nome}
+              imageUrl={getPatrocinadorAleatorio(0).logo_url || "/placeholder.svg"}
+              link={getPatrocinadorAleatorio(0).link_site || "#"}
+              title={getPatrocinadorAleatorio(0).nome}
               className="w-full"
             />
           ) : (
@@ -135,11 +146,11 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
                   {/* Inserir anúncio após o segundo parágrafo */}
                   {index === 1 && (
                     <div className="my-8">
-                      {patrocinadores.length > 0 ? (
+                      {patrocinadoresAleatorios.length > 0 ? (
                         <AdBanner
-                          imageUrl={getPatrocinadorAlternado(1).logo_url || "/placeholder.svg"}
-                          link={getPatrocinadorAlternado(1).link_site || "#"}
-                          title={getPatrocinadorAlternado(1).nome}
+                          imageUrl={getPatrocinadorAleatorio(1).logo_url || "/placeholder.svg"}
+                          link={getPatrocinadorAleatorio(1).link_site || "#"}
+                          title={getPatrocinadorAleatorio(1).nome}
                           className="w-full"
                         />
                       ) : (
@@ -159,16 +170,17 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
 
           {/* Sidebar com anúncios */}
           <aside className="lg:w-1/3">
-            <div className="sticky top-8 space-y-6">
+            <div className="space-y-6">
               <Card>
                 <CardContent className="p-4">
                   <h3 className="font-bold mb-4 text-gray-900">Publicidade</h3>
-                  {patrocinadores.length > 0 ? (
+                  {patrocinadoresAleatorios.length > 0 ? (
                     <AdBanner
-                      imageUrl={getPatrocinadorAlternado(2).logo_url || "/placeholder.svg"}
-                      link={getPatrocinadorAlternado(2).link_site || "#"}
-                      title={getPatrocinadorAlternado(2).nome}
+                      imageUrl={getPatrocinadorAleatorio(2).logo_url || "/placeholder.svg"}
+                      link={getPatrocinadorAleatorio(2).link_site || "#"}
+                      title={getPatrocinadorAleatorio(2).nome}
                       className="w-full"
+                      onlyImage
                     />
                   ) : (
                     <AdBanner
@@ -176,6 +188,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
                       link="#"
                       title="Anúncio Lateral"
                       className="w-full"
+                      onlyImage
                     />
                   )}
                 </CardContent>

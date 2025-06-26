@@ -5,10 +5,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Search } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showAnim, setShowAnim] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter()
 
   const menuItems = [
     { label: "Início", href: "/" },
@@ -21,6 +24,13 @@ export default function Header() {
   useEffect(() => {
     setShowAnim(true)
   }, [])
+
+  function handleSearch(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      router.push(`/?q=${encodeURIComponent(searchTerm.trim())}`)
+    }
+  }
 
   return (
     <header className={`bg-red-600 shadow-md sticky top-0 z-50 transition-all duration-700 ${showAnim ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`} style={{willChange: 'opacity, transform'}}>
@@ -45,14 +55,16 @@ export default function Header() {
 
           {/* Desktop search */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="relative">
+            <form className="relative" onSubmit={handleSearch}>
               <input
                 type="text"
                 placeholder="Buscar notícias..."
                 className="pl-10 pr-4 py-2 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-white text-gray-900"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            </div>
+            </form>
           </div>
 
           {/* Mobile menu button */}
@@ -79,14 +91,16 @@ export default function Header() {
 
           {/* Mobile search */}
           <div className="md:hidden mt-2">
-            <div className="relative">
+            <form className="relative" onSubmit={handleSearch}>
               <input
                 type="text"
                 placeholder="Buscar notícias..."
                 className="w-full pl-10 pr-4 py-2 border border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-white text-gray-900"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            </div>
+            </form>
           </div>
         </nav>
       </div>

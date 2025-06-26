@@ -74,8 +74,8 @@ export default function Footer() {
             ) : (
               <div className="h-14 flex items-center justify-center text-gray-400">
                 Sem patrocinadores
-              </div>
-            )}
+            </div>
+          )}
           </div>
 
           {/* Links úteis + Instagram */}
@@ -87,16 +87,18 @@ export default function Footer() {
               Sobre
             </Link>
             <Link
-              href="/contato"
-              className="text-gray-700 hover:text-red-600 font-semibold transition-colors"
-            >
-              Contato
-            </Link>
-            <Link
               href="/privacidade"
               className="text-gray-700 hover:text-red-600 font-semibold transition-colors hidden md:block"
             >
               Privacidade
+            </Link>
+            <Link
+              href="http://wa.me/5588996794900"
+              className="text-gray-700 hover:text-green-600 font-semibold transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contato
             </Link>
             {/* Instagram */}
             <a

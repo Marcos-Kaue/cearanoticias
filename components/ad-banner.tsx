@@ -8,9 +8,26 @@ interface AdBannerProps {
   title: string
   buttonText?: string
   className?: string
+  onlyImage?: boolean
 }
 
-export default function AdBanner({ imageUrl, link, title, buttonText = "Saiba mais", className }: AdBannerProps) {
+export default function AdBanner({ imageUrl, link, title, buttonText = "Saiba mais", className, onlyImage = false }: AdBannerProps) {
+  if (onlyImage) {
+    return (
+      <div className={cn("w-full my-6", className)}>
+        <Link href={link} target="_blank" rel="noopener noreferrer">
+          <Image
+            src={imageUrl || "/placeholder.svg"}
+            alt={title}
+            width={300}
+            height={250}
+            className="w-full h-auto object-contain rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
+            priority
+          />
+        </Link>
+      </div>
+    )
+  }
   return (
     <div className={cn("w-full my-6", className)}>
       <div className="text-xs text-gray-400 mb-1 text-center tracking-widest">PUBLICIDADE</div>
