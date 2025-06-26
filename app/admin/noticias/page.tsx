@@ -67,23 +67,24 @@ export default function AdminNoticias() {
   })
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 px-4 md:px-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gerenciar Notícias</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Gerenciar Notícias</h1>
           <p className="text-gray-600">Crie, edite e publique suas notícias</p>
         </div>
-        <Button asChild>
+      </div>
+      <div className="flex justify-center my-6">
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/admin/noticias/nova">
             <Plus className="w-4 h-4 mr-2" />
             Nova Notícia
           </Link>
         </Button>
       </div>
-
       {/* Filtros */}
-      <Card>
-        <CardContent className="p-6">
+      <Card className="px-2 md:px-4">
+        <CardContent className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -111,9 +112,8 @@ export default function AdminNoticias() {
           </div>
         </CardContent>
       </Card>
-
       {/* Lista de notícias */}
-      <Card>
+      <Card className="px-2 md:px-4">
         <CardHeader>
           <CardTitle>Suas Notícias ({filteredNoticias.length})</CardTitle>
         </CardHeader>
@@ -125,7 +125,7 @@ export default function AdminNoticias() {
           ) : noticias.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">Nenhuma notícia cadastrada ainda.</p>
-              <Button asChild className="mt-4">
+              <Button asChild className="mt-4 w-full sm:w-auto">
                 <Link href="/admin/noticias/nova">
                   <Plus className="w-4 h-4 mr-2" />
                   Criar Primeira Notícia
@@ -135,16 +135,15 @@ export default function AdminNoticias() {
           ) : (
             <div className="space-y-4">
               {filteredNoticias.map((noticia) => (
-                <div key={noticia.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50">
+                <div key={noticia.id} className="flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 max-w-md mx-auto sm:max-w-none sm:mx-0 items-center text-center sm:text-left">
                   <Image
                     src={noticia.imagem_url || "/placeholder.svg"}
                     alt={noticia.titulo}
                     width={150}
                     height={100}
-                    className="w-24 h-16 object-cover rounded"
+                    className="w-full sm:w-24 h-16 object-cover rounded mx-auto sm:mx-0"
                   />
-
-                  <div className="flex-1">
+                  <div className="flex-1 w-full">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="secondary">{noticia.categoria}</Badge>
                       <Badge variant={noticia.status === "publicado" ? "default" : "secondary"}>{noticia.status}</Badge>
@@ -163,8 +162,7 @@ export default function AdminNoticias() {
                       </span>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mt-2 sm:mt-0 justify-center sm:justify-start">
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/noticia/${noticia.id}`} target="_blank">
                         <Eye className="w-4 h-4" />

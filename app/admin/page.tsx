@@ -74,9 +74,9 @@ export default function AdminDashboard() {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 md:px-0">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-600">Visão geral do seu portal de notícias</p>
       </div>
 

@@ -115,22 +115,19 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
+    <div className="space-y-6 px-2 md:px-0">
+      <div className="flex flex-col md:flex-row items-start gap-4">
+        <Button variant="outline" size="sm" asChild className="w-full md:w-auto mb-2 md:mb-0">
           <Link href="/admin/noticias">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Editar Notícia</h1>
-          <p className="text-gray-600">
-            Modifique os detalhes da notícia abaixo
-          </p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Editar Notícia</h1>
+          <p className="text-gray-600">Altere as informações da notícia</p>
         </div>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Formulário principal */}
         <div className="lg:col-span-2 space-y-6">
@@ -146,6 +143,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                   placeholder="Digite o título da notícia..."
                   value={formData.titulo}
                   onChange={e => handleInputChange("titulo", e.target.value)}
+                  className="w-full"
                 />
               </div>
 
@@ -157,6 +155,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                   rows={3}
                   value={formData.resumo}
                   onChange={e => handleInputChange("resumo", e.target.value)}
+                  className="w-full"
                 />
               </div>
 
@@ -165,6 +164,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                 <Select
                   value={formData.categoria}
                   onValueChange={value => handleInputChange("categoria", value)}
+                  className="w-full"
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma categoria" />
@@ -188,6 +188,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                   onChange={e =>
                     handleInputChange("imagem_url", e.target.value)
                   }
+                  className="w-full"
                 />
               </div>
             </CardContent>
@@ -203,6 +204,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                 rows={15}
                 value={formData.conteudo}
                 onChange={e => handleInputChange("conteudo", e.target.value)}
+                className="w-full"
               />
             </CardContent>
           </Card>

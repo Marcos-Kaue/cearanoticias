@@ -129,10 +129,10 @@ export default function AdminPatrocinadores() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 px-2 md:px-0">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Patrocinadores</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Patrocinadores</h1>
           <p className="text-gray-600">Gerencie os patrocinadores do seu portal</p>
         </div>
       </div>
@@ -224,32 +224,31 @@ export default function AdminPatrocinadores() {
           ) : (
             <div className="space-y-4">
               {patrocinadores.map((patrocinador) => (
-                <div key={patrocinador.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-4">
+                <div key={patrocinador.id} className="flex flex-col sm:flex-row items-center justify-between p-4 border rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
                     <Image
                       src={patrocinador.logo_url || "/placeholder.svg"}
                       alt={patrocinador.nome}
                       width={80}
                       height={40}
-                      className="h-10 w-20 object-contain border rounded"
+                      className="h-10 w-20 object-contain border rounded mx-auto sm:mx-0"
                     />
-                    <div>
+                    <div className="text-center sm:text-left">
                       <h3 className="font-medium">{patrocinador.nome}</h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-gray-500">
                         <ExternalLink className="w-3 h-3" />
                         <a
                           href={patrocinador.link_site}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hover:text-blue-600"
+                          className="hover:text-blue-600 break-all"
                         >
                           {patrocinador.link_site}
                         </a>
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mt-2 sm:mt-0">
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
                         patrocinador.ativo ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
@@ -273,7 +272,7 @@ export default function AdminPatrocinadores() {
 
       {/* Botão Novo Patrocinador centralizado abaixo da lista */}
       <div className="flex justify-center mt-6">
-        <Button onClick={() => setShowForm(true)}>
+        <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Novo Patrocinador
         </Button>
