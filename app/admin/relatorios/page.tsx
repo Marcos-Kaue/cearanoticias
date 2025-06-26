@@ -1,3 +1,5 @@
+"use client"
+
 import { useProtectAdmin } from "@/hooks/use-protect-admin";
 
 export default function AdminRelatorios() {
