@@ -11,6 +11,7 @@ interface NoticiaEnviada {
   texto: string
   status: string
   created_at: string
+  imagem_url?: string
 }
 
 export default function AdminNoticiasEnviadas() {
@@ -48,7 +49,7 @@ export default function AdminNoticiasEnviadas() {
           resumo: n.texto.slice(0, 200),
           conteudo: n.texto,
           categoria: "Geral",
-          imagem_url: "",
+          imagem_url: n.imagem_url || "",
           status: "rascunho",
           autor: n.nome,
         })
@@ -81,6 +82,14 @@ export default function AdminNoticiasEnviadas() {
                 <span className="font-bold text-lg text-gray-900">{n.titulo}</span>
                 <span className="text-xs text-gray-500">Enviada em {new Date(n.created_at).toLocaleString("pt-BR")}</span>
               </div>
+              {n.imagem_url && (
+                <img
+                  src={n.imagem_url}
+                  alt={n.titulo}
+                  style={{ maxWidth: 120, maxHeight: 80, objectFit: 'contain', marginBottom: 8, borderRadius: 8 }}
+                  className="mb-2"
+                />
+              )}
               <div className="mb-2 text-gray-700 whitespace-pre-line">{n.texto}</div>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between text-xs text-gray-500 gap-2">
                 <span>Por: {n.nome} ({n.telefone})</span>

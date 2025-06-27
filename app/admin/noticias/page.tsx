@@ -20,9 +20,15 @@ export default function AdminNoticias() {
   useProtectAdmin()
 
   // Carregar notícias
-  const loadNoticias = async () => {
+  const loadNoticias = async (status = filterStatus) => {
+    setLoading(true)
     try {
-      const response = await fetch('/api/noticias')
+      let statusParam = ''
+      if (status === 'Todos') statusParam = 'todos'
+      else if (status === 'Publicado') statusParam = 'publicado'
+      else if (status === 'Rascunho') statusParam = 'rascunho'
+      else if (status === 'Arquivado') statusParam = 'arquivado'
+      const response = await fetch(`/api/noticias?status=${statusParam}`)
       if (response.ok) {
         const data = await response.json()
         setNoticias(data)
@@ -35,8 +41,8 @@ export default function AdminNoticias() {
   }
 
   useEffect(() => {
-    loadNoticias()
-  }, [])
+    loadNoticias(filterStatus)
+  }, [filterStatus])
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja deletar esta notícia?')) return
@@ -67,7 +73,7 @@ export default function AdminNoticias() {
   })
 
   return (
-    <div className="space-y-6 px-4 md:px-6">
+    <div className="space-y-6 px-4 md:px-6 w-full max-w-full overflow-x-auto md:overflow-x-visible">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Gerenciar Notícias</h1>
@@ -98,7 +104,12 @@ export default function AdminNoticias() {
               </div>
             </div>
             <div className="flex gap-2">
-              {["Todos", "Publicado", "Rascunho", "Arquivado"].map((status) => (
+              {[
+                "Todos",
+                "Publicado",
+                "Rascunho",
+                "Arquivado"
+              ].map((status) => (
                 <Button
                   key={status}
                   variant={filterStatus === status ? "default" : "outline"}
@@ -135,21 +146,24 @@ export default function AdminNoticias() {
           ) : (
             <div className="space-y-4">
               {filteredNoticias.map((noticia) => (
-                <div key={noticia.id} className="flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 max-w-md mx-auto sm:max-w-none sm:mx-0 items-center text-center sm:text-left">
-                  <Image
-                    src={noticia.imagem_url || "/placeholder.svg"}
-                    alt={noticia.titulo}
-                    width={150}
-                    height={100}
-                    className="w-full sm:w-24 h-16 object-cover rounded mx-auto sm:mx-0"
-                  />
+                <div key={noticia.id} className="flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 w-full max-w-full text-center sm:text-left">
+                  <div style={{ minWidth: 80, minHeight: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Image
+                      src={noticia.imagem_url || "/placeholder.svg"}
+                      alt={noticia.titulo}
+                      width={80}
+                      height={60}
+                      style={{ objectFit: 'cover', borderRadius: 8 }}
+                      className="flex-shrink-0"
+                    />
+                  </div>
                   <div className="flex-1 w-full">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="secondary">{noticia.categoria}</Badge>
                       <Badge variant={noticia.status === "publicado" ? "default" : "secondary"}>{noticia.status}</Badge>
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-1">{noticia.titulo}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{noticia.resumo}</p>
+                    <p className="text-sm text-gray-600 mb-2 break-words">{noticia.resumo}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>Por {noticia.autor}</span>
                       <span className="flex items-center gap-1">
@@ -163,17 +177,17 @@ export default function AdminNoticias() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-2 sm:mt-0 justify-center sm:justify-start">
-                    <Button variant="outline" size="sm" asChild>
+                    <Button variant="outline" size="sm" asChild aria-label="Visualizar notícia">
                       <Link href={`/noticia/${noticia.id}`} target="_blank">
                         <Eye className="w-4 h-4" />
                       </Link>
                     </Button>
-                    <Button variant="outline" size="sm" asChild>
+                    <Button variant="outline" size="sm" asChild aria-label="Editar notícia">
                       <Link href={`/admin/noticias/editar/${noticia.id}`}>
                         <Edit className="w-4 h-4" />
                       </Link>
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleDelete(noticia.id || 0)}>
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(noticia.id || 0)} aria-label="Deletar notícia">
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
                   </div>

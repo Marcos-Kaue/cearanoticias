@@ -7,6 +7,7 @@ import Facebook from "lucide-react/dist/esm/icons/facebook"
 import Instagram from "lucide-react/dist/esm/icons/instagram"
 import Whatsapp from "lucide-react/dist/esm/icons/whatsapp"
 import React from "react"
+import { Metadata } from 'next'
 
 async function getNoticia(id: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
@@ -199,4 +200,28 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
       </div>
     </div>
   )
+}
+
+// SEO dinâmico para cada notícia
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const noticia = await getNoticia(params.id)
+  if (!noticia) return { title: 'Notícia não encontrada' }
+  return {
+    title: noticia.titulo,
+    description: noticia.resumo || noticia.titulo,
+    openGraph: {
+      title: noticia.titulo,
+      description: noticia.resumo || noticia.titulo,
+      images: noticia.imagem_url ? [noticia.imagem_url] : [`${baseUrl}/placeholder.jpg`],
+      url: `${baseUrl}/noticia/${noticia.id}`,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: noticia.titulo,
+      description: noticia.resumo || noticia.titulo,
+      images: noticia.imagem_url ? [noticia.imagem_url] : [`${baseUrl}/placeholder.jpg`],
+    },
+  }
 }

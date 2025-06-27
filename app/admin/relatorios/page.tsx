@@ -28,6 +28,14 @@ export default function AdminRelatorios() {
   const [visualizacoesPorMes, setVisualizacoesPorMes] = useState<any[]>([])
   const [rankingMaisLidas, setRankingMaisLidas] = useState<any[]>([])
 
+  // Mapear label do período
+  const labelPeriodo = {
+    tudo: '',
+    dia: ' (Hoje)',
+    semana: ' (Esta Semana)',
+    mes: ' (Este Mês)'
+  };
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
@@ -130,36 +138,54 @@ export default function AdminRelatorios() {
 
           {/* Gráfico de visualizações por mês */}
           <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-gray-900">Visualizações por Mês</h2>
-            <div className="flex items-end gap-2 h-40">
-              {visualizacoesPorMes.map(([mes, total]) => (
-                <div key={mes} className="flex flex-col items-center justify-end h-full">
-                  <div
-                    className="bg-red-500 rounded-t w-8 transition-all"
-                    style={{ height: `${Math.max(10, (total / (Math.max(...visualizacoesPorMes.map(([, t]) => t)) || 1)) * 100)}%` }}
-                    title={`${total} visualizações`}
-                  />
-                  <span className="text-xs mt-1 text-gray-700">{mes}</span>
-                  <span className="text-xs text-gray-500">{total}</span>
-                </div>
-              ))}
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Visualizações por Mês{labelPeriodo[periodo]}</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-[340px] w-full border rounded-lg overflow-hidden text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-bold text-gray-700">Mês</th>
+                    <th className="px-4 py-2 text-right font-bold text-gray-700">Visualizações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visualizacoesPorMes.map(([mes, total], idx) => (
+                    <tr key={mes} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-2 text-gray-800">{mes}</td>
+                      <td className="px-4 py-2 text-right font-mono font-semibold text-gray-900">{total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
           {/* Ranking das mais lidas */}
           <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-gray-900">Notícias Mais Lidas</h2>
-            <ol className="space-y-3">
-              {rankingMaisLidas.map((noticia, idx) => (
-                <li key={noticia.id} className="flex items-center gap-3 bg-gray-50 rounded p-3 hover:bg-gray-100 transition">
-                  <span className="text-lg font-bold text-red-600 w-6 text-center">{idx + 1}</span>
-                  <Link href={`/noticia/${noticia.id}`} className="flex-1 font-medium text-gray-900 hover:text-red-700 transition-colors">
-                    {noticia.titulo}
-                  </Link>
-                  <span className="text-xs text-gray-500 whitespace-nowrap">{noticia.visualizacoes || 0} visualizações</span>
-                </li>
-              ))}
-            </ol>
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Notícias Mais Lidas{labelPeriodo[periodo]}</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-[340px] w-full border rounded-lg overflow-hidden text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-bold text-gray-700">#</th>
+                    <th className="px-4 py-2 text-left font-bold text-gray-700">Título</th>
+                    <th className="px-4 py-2 text-right font-bold text-gray-700">Visualizações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rankingMaisLidas.slice(0, 3).map((noticia, idx) => (
+                    <tr key={noticia.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-2 text-red-600 font-bold text-center">{idx + 1}</td>
+                      <td className="px-4 py-2">
+                        <Link href={`/noticia/${noticia.id}`} className="font-medium text-gray-900 hover:text-red-700 transition-colors">
+                          {noticia.titulo}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2 text-right font-mono font-semibold text-gray-900">{noticia.visualizacoes || 0}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

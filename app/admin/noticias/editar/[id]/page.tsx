@@ -190,6 +190,16 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                   }
                   className="w-full"
                 />
+                {imagePreview && (
+                  <div className="mt-2">
+                    <span className="text-xs text-gray-500 block mb-1">Pré-visualização:</span>
+                    <img
+                      src={imagePreview}
+                      alt="Pré-visualização da imagem"
+                      style={{ maxWidth: 180, maxHeight: 120, objectFit: 'contain', borderRadius: 8, border: '1px solid #eee' }}
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -237,11 +247,38 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
               >
                 Salvar como Rascunho
               </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href={`/noticia/${params.id}`} target="_blank">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full ml-2"
+                  onClick={() => {
+                    localStorage.setItem('noticia-preview', JSON.stringify(formData));
+                    window.open('/admin/noticias/preview', '_blank');
+                  }}
+                >
                   <Eye className="w-4 h-4 mr-2" />
                   Visualizar
-                </Link>
+                </Button>
+              </div>
+              <Button
+                variant="outline"
+                className="w-full text-red-600 border-red-400 hover:bg-red-50 mt-2"
+                onClick={async () => {
+                  try {
+                    const noticiaData = { ...formData, status: 'arquivado' };
+                    const response = await fetch(`/api/noticias/${params.id}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(noticiaData),
+                    });
+                    if (!response.ok) throw new Error('Erro ao arquivar notícia');
+                    window.location.href = '/admin/noticias';
+                  } catch (error) {
+                    alert('Erro ao arquivar notícia. Tente novamente.');
+                  }
+                }}
+              >
+                Arquivar
               </Button>
             </CardContent>
           </Card>
