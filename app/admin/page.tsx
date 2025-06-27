@@ -7,6 +7,14 @@ import DebugPanel from "@/components/debug-panel"
 import { Noticia, Patrocinador } from "@/lib/supabase"
 import { useProtectAdmin } from "@/hooks/use-protect-admin"
 
+function NumeroFormatado({valor}:{valor:number}) {
+  const [num, setNum] = useState('')
+  useEffect(() => {
+    setNum(valor.toLocaleString('pt-BR'))
+  }, [valor])
+  return <>{num}</>
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalNoticias: 0,
@@ -102,7 +110,7 @@ export default function AdminDashboard() {
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.visualizacoes.toLocaleString()}</div>
+            <div className="text-2xl font-bold"><NumeroFormatado valor={stats.visualizacoes} /></div>
             <p className="text-xs text-muted-foreground">Total acumulado</p>
           </CardContent>
         </Card>

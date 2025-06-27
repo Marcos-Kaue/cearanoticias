@@ -20,6 +20,14 @@ function getVisualizacoesPorMes(noticias: any[]) {
 
 type Periodo = "tudo" | "dia" | "semana" | "mes"
 
+function NumeroFormatado({valor}:{valor:number}) {
+  const [num, setNum] = useState('')
+  useEffect(() => {
+    setNum(valor.toLocaleString('pt-BR'))
+  }, [valor])
+  return <>{num}</>
+}
+
 export default function AdminRelatorios() {
   const [noticias, setNoticias] = useState<any[]>([])
   const [patrocinadores, setPatrocinadores] = useState<any[]>([])
@@ -121,7 +129,7 @@ export default function AdminRelatorios() {
                 <CardTitle>Visualizações</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{totalVisualizacoes.toLocaleString()}</div>
+                <div className="text-2xl font-bold"><NumeroFormatado valor={totalVisualizacoes} /></div>
                 <p className="text-xs text-gray-500">Total acumulado</p>
               </CardContent>
             </Card>

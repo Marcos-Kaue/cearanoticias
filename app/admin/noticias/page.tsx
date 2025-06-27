@@ -72,6 +72,16 @@ export default function AdminNoticias() {
     return matchesSearch && matchesStatus
   })
 
+  function formatarDataBR(dateStr: string | null | undefined) {
+    const [data, setData] = useState('')
+    useEffect(() => {
+      if (dateStr) {
+        setData(new Date(dateStr).toLocaleDateString('pt-BR'))
+      }
+    }, [dateStr])
+    return data || 'Data não disponível'
+  }
+
   return (
     <div className="space-y-6 px-4 md:px-6 w-full max-w-full overflow-x-auto md:overflow-x-visible">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
@@ -168,7 +178,7 @@ export default function AdminNoticias() {
                       <span>Por {noticia.autor}</span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {noticia.created_at ? new Date(noticia.created_at).toLocaleDateString("pt-BR") : 'Data não disponível'}
+                        {noticia.created_at ? <span>{formatarDataBR(noticia.created_at)}</span> : 'Data não disponível'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="w-3 h-3" />
