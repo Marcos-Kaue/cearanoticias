@@ -158,14 +158,14 @@ export default function AdminNoticias() {
               {filteredNoticias.map((noticia) => (
                 <div key={noticia.id} className="flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 w-full max-w-full text-center sm:text-left">
                   <div style={{ minWidth: 80, minHeight: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Image
-                      src={noticia.imagem_url || "/placeholder.svg"}
-                      alt={noticia.titulo}
+                  <Image
+                    src={noticia.imagem_url || "/placeholder.svg"}
+                    alt={noticia.titulo}
                       width={80}
                       height={60}
                       style={{ objectFit: 'cover', borderRadius: 8 }}
                       className="flex-shrink-0"
-                    />
+                  />
                   </div>
                   <div className="flex-1 w-full">
                     <div className="flex items-center gap-2 mb-2">
