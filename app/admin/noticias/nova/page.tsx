@@ -42,7 +42,7 @@ export default function NovaNoticia() {
     conteudo: "",
     categoria: "",
     imagem_url: "",
-    status: "rascunho",
+    status: "publicado",
   })
 
   const [imagePreview, setImagePreview] = useState("")
@@ -213,7 +213,7 @@ export default function NovaNoticia() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                className="w-full"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
                 onClick={() => handleSave("publicado")}
                 disabled={!formData.titulo || !formData.conteudo}
               >
@@ -221,17 +221,6 @@ export default function NovaNoticia() {
                 Publicar Notícia
               </Button>
               <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>Salvar Rascunho</Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  localStorage.setItem('noticia-preview', JSON.stringify(formData));
-                  window.open('/admin/noticias/preview', '_blank');
-                }}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Visualizar
-              </Button>
             </CardContent>
           </Card>
 
