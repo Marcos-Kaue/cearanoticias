@@ -65,12 +65,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
 /* Estilos customizados para o site de notícias */
 .prose {
-  @apply text-gray-800;
+  @apply text-gray-800 dark:text-gray-200;
 }
 
 .prose p {
@@ -80,7 +81,7 @@
 .prose h1,
 .prose h2,
 .prose h3 {
-  @apply text-gray-900 font-bold;
+  @apply text-gray-900 dark:text-gray-100 font-bold;
 }
 
 /* Animações suaves */
@@ -104,15 +105,15 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 rounded-full;
+  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600;
+  @apply bg-gray-600 dark:bg-gray-500;
 }
 
 /* Animação do carrossel de patrocinadores */
@@ -140,4 +141,50 @@ a {
   to {
     transform: translate(calc(-50% - 0.5rem));
   }
+}
+
+/* Estilos específicos para modo escuro */
+.dark .bg-gray-50 {
+  @apply bg-gray-900;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800;
+}
+
+.dark .text-gray-600 {
+  @apply text-gray-300;
+}
+
+.dark .text-gray-700 {
+  @apply text-gray-200;
+}
+
+.dark .text-gray-800 {
+  @apply text-gray-100;
+}
+
+.dark .text-gray-900 {
+  @apply text-gray-50;
+}
+
+.dark .border-gray-200 {
+  @apply border-gray-700;
+}
+
+.dark .border-gray-300 {
+  @apply border-gray-600;
+}
+
+.dark .hover\:bg-gray-50:hover {
+  @apply hover:bg-gray-800;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  @apply hover:bg-gray-700;
+}
+
+/* Transições suaves para mudança de tema */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }

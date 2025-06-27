@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, User, LogOut } from "lucide-react"
 import Image from "next/image"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { supabase } from "@/lib/supabase"
 
 export default function AdminHeader() {
   const router = useRouter()
@@ -36,6 +37,7 @@ export default function AdminHeader() {
             <User className="w-4 h-4 text-white" />
             <span>Admin</span>
           </div>
+          <ThemeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-gray-200">
             <LogOut className="w-4 h-4 text-white" />
           </Button>

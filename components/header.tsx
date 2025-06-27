@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Search } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -53,7 +54,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop search */}
+          {/* Desktop search and theme toggle */}
           <div className="hidden md:flex items-center gap-4">
             <form className="relative" onSubmit={handleSearch}>
               <input
@@ -65,12 +66,16 @@ export default function Header() {
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             </form>
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
-          <Button variant="ghost" size="sm" className="md:hidden text-white hover:bg-red-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <Button variant="ghost" size="sm" className="text-white hover:bg-red-700" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
         </div>
 
         {/* Navigation */}
