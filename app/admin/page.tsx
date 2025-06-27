@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, Users, Eye, TrendingUp, Calendar } from "lucide-react"
 import DebugPanel from "@/components/debug-panel"
 import { Noticia, Patrocinador } from "@/lib/supabase"
-import { useProtectAdmin } from "@/hooks/use-protect-admin"
 
 function NumeroFormatado({valor}:{valor:number}) {
   const [num, setNum] = useState('')
@@ -26,8 +25,6 @@ export default function AdminDashboard() {
   })
   const [recentNews, setRecentNews] = useState<Noticia[]>([])
   const [loading, setLoading] = useState(true)
-
-  useProtectAdmin()
 
   useEffect(() => {
     const fetchData = async () => {

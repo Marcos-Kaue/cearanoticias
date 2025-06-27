@@ -10,7 +10,6 @@ import { Plus, Edit, Trash2, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { Patrocinador } from "@/lib/supabase"
 import { supabase } from "@/lib/supabase"
-import { useProtectAdmin } from "@/hooks/use-protect-admin"
 
 export default function AdminPatrocinadores() {
   const [showForm, setShowForm] = useState(false)
@@ -24,8 +23,6 @@ export default function AdminPatrocinadores() {
     ativo: true,
     ordem_exibicao: 0,
   })
-
-  useProtectAdmin()
 
   // Carregar patrocinadores
   const loadPatrocinadores = async () => {

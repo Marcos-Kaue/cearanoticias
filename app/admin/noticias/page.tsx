@@ -9,15 +9,25 @@ import { Plus, Search, Edit, Trash2, Eye, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Noticia } from "@/lib/supabase"
-import { useProtectAdmin } from "@/hooks/use-protect-admin"
+
+// Componente separado para formatar data
+function DataFormatada({ dateStr }: { dateStr: string | null | undefined }) {
+  const [data, setData] = useState('')
+  
+  useEffect(() => {
+    if (dateStr) {
+      setData(new Date(dateStr).toLocaleDateString('pt-BR'))
+    }
+  }, [dateStr])
+  
+  return <span>{data || 'Data não disponível'}</span>
+}
 
 export default function AdminNoticias() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("Todos")
   const [noticias, setNoticias] = useState<Noticia[]>([])
   const [loading, setLoading] = useState(true)
-
-  useProtectAdmin()
 
   // Carregar notícias
   const loadNoticias = async (status = filterStatus) => {
@@ -71,16 +81,6 @@ export default function AdminNoticias() {
       (filterStatus === "Arquivado" && noticia.status === "arquivado")
     return matchesSearch && matchesStatus
   })
-
-  function formatarDataBR(dateStr: string | null | undefined) {
-    const [data, setData] = useState('')
-    useEffect(() => {
-      if (dateStr) {
-        setData(new Date(dateStr).toLocaleDateString('pt-BR'))
-      }
-    }, [dateStr])
-    return data || 'Data não disponível'
-  }
 
   return (
     <div className="space-y-6 px-4 md:px-6 w-full max-w-full overflow-x-auto md:overflow-x-visible">
@@ -178,7 +178,7 @@ export default function AdminNoticias() {
                       <span>Por {noticia.autor}</span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {noticia.created_at ? <span>{formatarDataBR(noticia.created_at)}</span> : 'Data não disponível'}
+                        <DataFormatada dateStr={noticia.created_at} />
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="w-3 h-3" />
