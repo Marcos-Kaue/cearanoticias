@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || 'publicado' // padrão: publicado
     const categoria = searchParams.get('categoria')
     
+    console.log('API Notícias - Parâmetros:', { status, categoria })
+    
     let query = supabase
       .from('noticias')
       .select('*')
@@ -31,9 +33,20 @@ export async function GET(request: NextRequest) {
     
     const { data, error } = await query
     
-    if (error) throw error
+    if (error) {
+      console.error('Erro Supabase:', error)
+      throw error
+    }
     
-    return NextResponse.json(data)
+    console.log(`API Notícias - Encontradas ${data?.length || 0} notícias`)
+    
+    // Adicionar headers para evitar cache
+    const response = NextResponse.json(data)
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    
+    return response
   } catch (error) {
     console.error('Erro detalhado ao buscar notícias:', error)
     if (error instanceof Error) {
@@ -53,6 +66,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
+    console.log('API Notícias - Criando nova notícia:', { titulo: body.titulo, status: body.status })
+    
     const { data, error } = await supabase
       .from('noticias')
       .insert([{
@@ -63,7 +78,12 @@ export async function POST(request: NextRequest) {
       }])
       .select()
     
-    if (error) throw error
+    if (error) {
+      console.error('Erro Supabase ao criar notícia:', error)
+      throw error
+    }
+    
+    console.log('API Notícias - Notícia criada com sucesso:', data[0]?.id)
     
     return NextResponse.json(data[0])
   } catch (error) {

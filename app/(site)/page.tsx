@@ -17,8 +17,14 @@ interface Noticia {
 async function getNoticias(): Promise<Noticia[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-    const res = await fetch(`${baseUrl}/api/noticias`, {
+    console.log('Buscando notícias de:', `${baseUrl}/api/noticias`)
+    
+    const res = await fetch(`${baseUrl}/api/noticias?status=publicado`, {
       cache: "no-store",
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
     })
 
     if (!res.ok) {
@@ -27,8 +33,13 @@ async function getNoticias(): Promise<Noticia[]> {
     }
 
     const data = await res.json()
-    // Filtra apenas notícias com data de hoje ou do passado
-    return data
+    console.log(`Encontradas ${data?.length || 0} notícias publicadas`)
+    
+    // Filtra apenas notícias publicadas
+    const noticiasPublicadas = data.filter((noticia: any) => noticia.status === 'publicado')
+    console.log(`Notícias publicadas: ${noticiasPublicadas.length}`)
+    
+    return noticiasPublicadas
   } catch (error) {
     console.error("Ocorreu um erro ao buscar notícias:", error)
     return []
@@ -39,11 +50,26 @@ async function getNoticias(): Promise<Noticia[]> {
 async function getPatrocinadores() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { cache: "no-store" })
-    if (!res.ok) return []
+    console.log('Buscando patrocinadores de:', `${baseUrl}/api/patrocinadores`)
+    
+    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { 
+      cache: "no-store",
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    })
+    
+    if (!res.ok) {
+      console.error("Falha ao buscar patrocinadores:", res.statusText)
+      return []
+    }
+    
     const data = await res.json()
+    console.log(`Encontrados ${data?.length || 0} patrocinadores ativos`)
     return data
-  } catch {
+  } catch (error) {
+    console.error("Erro ao buscar patrocinadores:", error)
     return []
   }
 }
