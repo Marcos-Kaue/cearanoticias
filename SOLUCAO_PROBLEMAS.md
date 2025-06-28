@@ -157,4 +157,116 @@ Se ainda tiver problemas:
 - [ ] Painel de debug mostra "sucesso"
 - [ ] APIs respondem corretamente
 
-**Se todos os itens estiverem marcados, o painel deve funcionar perfeitamente!** 🚀 
+**Se todos os itens estiverem marcados, o painel deve funcionar perfeitamente!** 🚀
+
+# 🔧 Solução para Problemas Atuais
+
+## Problema 1: Notícias não aparecem na Vercel
+
+### ✅ Correções Implementadas:
+
+1. **Configuração do Next.js** (`next.config.mjs`)
+   - Adicionados headers para evitar cache
+   - Configuração para pacotes externos do Supabase
+
+2. **API de Notícias** (`app/api/noticias/route.ts`)
+   - Logs detalhados para debug
+   - Headers para evitar cache
+   - Melhor tratamento de erros
+
+3. **Página Principal** (`app/(site)/page.tsx`)
+   - Filtro explícito por status "publicado"
+   - Logs para debug
+   - Headers para evitar cache
+
+### 🔍 Como Verificar:
+
+1. **Execute o script de debug:**
+   ```bash
+   npm run debug:vercel
+   ```
+
+2. **Verifique as variáveis de ambiente na Vercel:**
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SITE_URL`
+
+3. **Teste a API diretamente:**
+   ```
+   https://seu-dominio.vercel.app/api/noticias?status=publicado
+   ```
+
+### 🚨 Possíveis Causas:
+
+1. **Variáveis de ambiente não configuradas**
+2. **Notícias com status incorreto**
+3. **Cache do Next.js**
+4. **Problema de conexão com Supabase**
+
+## Problema 2: Prévia no Admin não funciona
+
+### ✅ Correções Implementadas:
+
+1. **Botão Visualizar** adicionado ao formulário de nova notícia
+2. **Página de prévia melhorada** com:
+   - Loading state
+   - Botões de ação
+   - Melhor tratamento de erros
+   - Debug logs
+
+### 🔍 Como Testar:
+
+1. **Acesse:** `/admin/noticias/nova`
+2. **Preencha:** título e conteúdo
+3. **Clique:** botão "Visualizar"
+4. **Verifique:** nova aba com prévia
+
+### 🚨 Se ainda não funcionar:
+
+1. **Abra o console do navegador** (F12)
+2. **Verifique se há erros**
+3. **Teste o localStorage:**
+   ```javascript
+   localStorage.getItem("noticia-preview")
+   ```
+
+## 📋 Checklist de Verificação
+
+### Para o Problema da Vercel:
+- [ ] Variáveis de ambiente configuradas
+- [ ] Novo deploy realizado
+- [ ] API retorna dados
+- [ ] Logs não mostram erros
+- [ ] Notícias têm status "publicado"
+
+### Para o Problema da Prévia:
+- [ ] Botão "Visualizar" aparece
+- [ ] localStorage funciona
+- [ ] Nova aba abre
+- [ ] Dados aparecem na prévia
+
+## 🛠️ Comandos Úteis
+
+```bash
+# Debug local
+npm run debug:vercel
+
+# Teste da API
+npm run test:api
+
+# Build para produção
+npm run build
+
+# Deploy na Vercel
+vercel --prod
+```
+
+## 📞 Próximos Passos
+
+1. **Configure as variáveis na Vercel**
+2. **Faça um novo deploy**
+3. **Teste a API diretamente**
+4. **Verifique os logs da Vercel**
+5. **Teste a prévia no admin**
+
+Se os problemas persistirem, verifique os logs da Vercel e me informe o que aparece! 

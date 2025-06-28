@@ -221,6 +221,20 @@ export default function NovaNoticia() {
                 Publicar Notícia
               </Button>
               <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>Salvar Rascunho</Button>
+              
+              {/* Botão Visualizar */}
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  localStorage.setItem('noticia-preview', JSON.stringify(formData));
+                  window.open('/admin/noticias/preview', '_blank');
+                }}
+                disabled={!formData.titulo || !formData.conteudo}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Visualizar
+              </Button>
             </CardContent>
           </Card>
 

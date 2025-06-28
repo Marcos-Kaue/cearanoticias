@@ -7,7 +7,9 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test:api": "node scripts/test-api.js"
+    "test:api": "node scripts/test-api.js",
+    "debug:vercel": "node scripts/debug-vercel.js",
+    "check:noticias": "node scripts/check-noticias.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
