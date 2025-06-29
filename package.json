@@ -9,7 +9,8 @@
     "start": "next start",
     "test:api": "node scripts/test-api.js",
     "debug:vercel": "node scripts/debug-vercel.js",
-    "check:noticias": "node scripts/check-noticias.js"
+    "check:noticias": "node scripts/check-noticias.js",
+    "test:buckets": "node scripts/test-buckets.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
