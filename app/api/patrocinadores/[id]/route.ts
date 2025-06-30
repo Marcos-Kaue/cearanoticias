@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 // GET - Buscar patrocinador por ID
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
     const { data, error } = await supabase
       .from('patrocinadores')
@@ -26,6 +27,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
     const body = await request.json()
     
@@ -51,6 +53,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
     const { error } = await supabase
       .from('patrocinadores')

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 export async function POST(request: NextRequest) {
+  const supabase = await createSupabaseServerClient()
   try {
     const formData = await request.formData()
     const nome = formData.get('nome') as string
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
+  const supabase = await createSupabaseServerClient()
   try {
     const { data, error } = await supabase
       .from('noticias_enviadas')
@@ -96,6 +98,7 @@ export async function GET() {
 }
 
 export async function DELETE(request: NextRequest) {
+  const supabase = await createSupabaseServerClient()
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

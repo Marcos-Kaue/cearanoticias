@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogIn, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { LogIn, Eye, EyeOff, AlertCircle, User } from "lucide-react"
 import Image from "next/image"
 
 export default function LoginPage() {
@@ -149,19 +149,35 @@ export default function LoginPage() {
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <h4 className="text-sm font-medium text-blue-900 mb-2">Como configurar:</h4>
-            <p className="text-xs text-blue-700 mb-2">
-              1. Acesse o Supabase Dashboard<br />
-              2. Vá em Authentication → Users<br />
-              3. Clique em &quot;Add User&quot;<br />
-              4. Use seu Gmail e senha preferida
-            </p>
-            <p className="text-xs text-blue-700">
-              <strong>Exemplo:</strong><br />
-              Email: seu@gmail.com<br />
-              Senha: minhasenha123
-            </p>
+          <div className="mt-6 space-y-4">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <h4 className="text-sm font-medium text-blue-900 mb-2 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Como configurar:
+              </h4>
+              <p className="text-xs text-blue-700 mb-2">
+                1. Acesse o Supabase Dashboard<br />
+                2. Vá em Authentication → Users<br />
+                3. Clique em "Add User"<br />
+                4. Use seu Gmail e senha preferida
+              </p>
+              <p className="text-xs text-blue-700">
+                <strong>Exemplo:</strong><br />
+                Email: seu@gmail.com<br />
+                Senha: minhasenha123
+              </p>
+            </div>
+
+            <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+              <h4 className="text-sm font-medium text-green-900 mb-2">💡 Dica: Como aparecer seu nome</h4>
+              <p className="text-xs text-green-700">
+                Para que apareça seu nome ao invés do email no painel:<br />
+                1. No Supabase, clique no seu usuário<br />
+                2. Em "User Metadata", adicione:<br />
+                <code className="bg-green-100 px-1 rounded">"name": "Seu Nome"</code><br />
+                3. Salve as alterações
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

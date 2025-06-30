@@ -1,24 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 // GET - Listar notícias
 export async function GET(request: NextRequest) {
-  const requestCookies = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        async get(name: string) {
-          const cookieStore = await cookies();
-          return cookieStore.get(name)?.value;
-        },
-        set() {},
-        remove() {},
-      },
-    }
-  )
+  const supabase = await createSupabaseServerClient()
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || 'publicado' // padrão: publicado
@@ -68,27 +53,13 @@ export async function GET(request: NextRequest) {
 
 // POST - Criar nova notícia
 export async function POST(request: NextRequest) {
-  const requestCookies2 = cookies();
-  const supabase2 = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        async get(name: string) {
-          const cookieStore = await cookies();
-          return cookieStore.get(name)?.value;
-        },
-        set() {},
-        remove() {},
-      },
-    }
-  )
+  const supabase = await createSupabaseServerClient()
   try {
     const body = await request.json()
     
     console.log('API Notícias - Criando nova notícia:', { titulo: body.titulo, status: body.status })
     
-    const { data, error } = await supabase2
+    const { data, error } = await supabase
       .from('noticias')
       .insert([{
         ...body,

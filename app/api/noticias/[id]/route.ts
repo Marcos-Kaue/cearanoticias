@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 // GET - Buscar notícia por ID
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
+    const { id } = await params
     const { data, error } = await supabase
       .from('noticias')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
     
     if (error) throw error
@@ -26,7 +28,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
+    const { id } = await params
     const body = await request.json()
 
     const { data, error } = await supabase
@@ -35,7 +39,7 @@ export async function PUT(
         ...body,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
 
     if (error) throw error
@@ -51,11 +55,13 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient()
   try {
+    const { id } = await params
     const { error } = await supabase
       .from('noticias')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
     
     if (error) throw error
     

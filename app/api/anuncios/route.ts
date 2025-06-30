@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 // GET - Listar anúncios
 export async function GET(request: NextRequest) {
+  const supabase = await createSupabaseServerClient()
   try {
     const { searchParams } = new URL(request.url)
     const ativo = searchParams.get('ativo')
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
 
 // POST - Criar novo anúncio
 export async function POST(request: NextRequest) {
+  const supabase = await createSupabaseServerClient()
   try {
     const body = await request.json()
     

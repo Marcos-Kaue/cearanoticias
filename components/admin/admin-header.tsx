@@ -9,6 +9,36 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 
+// Função para extrair o nome do usuário de forma inteligente
+function extractUserName(user: any): string {
+  // 1. Tenta pegar o nome completo do metadata
+  if (user.user_metadata?.full_name) {
+    return user.user_metadata.full_name
+  }
+  
+  // 2. Tenta pegar o nome do metadata
+  if (user.user_metadata?.name) {
+    return user.user_metadata.name
+  }
+  
+  // 3. Tenta pegar o nome do perfil
+  if (user.user_metadata?.user_name) {
+    return user.user_metadata.user_name
+  }
+  
+  // 4. Se não tiver nome, extrai do email (remove o domínio)
+  if (user.email) {
+    const emailName = user.email.split('@')[0]
+    // Capitaliza a primeira letra e substitui pontos/underscores por espaços
+    return emailName
+      .replace(/[._-]/g, ' ')
+      .replace(/\b\w/g, (l: string) => l.toUpperCase())
+  }
+  
+  // 5. Fallback
+  return "Usuário"
+}
+
 export default function AdminHeader() {
   const router = useRouter()
   const [userName, setUserName] = useState<string | null>(null)
@@ -17,8 +47,8 @@ export default function AdminHeader() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Tenta pegar o nome do usuário do metadata, senão usa o email
-        setUserName(user.user_metadata?.name || user.email)
+        const name = extractUserName(user)
+        setUserName(name)
       }
     }
     getUser()
@@ -48,7 +78,7 @@ export default function AdminHeader() {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 text-sm text-white">
             <User className="w-4 h-4 text-white" />
-            <span>{userName ? userName : "Usuário"}</span>
+            <span>{userName || "Usuário"}</span>
           </div>
           <ThemeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-gray-200">
