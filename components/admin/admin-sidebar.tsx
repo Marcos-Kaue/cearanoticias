@@ -27,11 +27,7 @@ const menuItems = [
     href: "/admin/patrocinadores",
     icon: Users,
   },
-  {
-    title: "Usuários",
-    href: "/admin/usuarios",
-    icon: Shield,
-  },
+
   {
     title: "Categorias",
     href: "/admin/categorias",
