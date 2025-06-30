@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import AdBanner from "@/components/ad-banner"
@@ -71,7 +72,9 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
       <div className="max-w-4xl mx-auto">
         {/* Botão de voltar para a página inicial */}
         <div className="mb-4">
-          <Link href="/" className="text-red-600 hover:underline mb-4 inline-block">← Voltar para a Home</Link>
+          <Button variant="outline" size="sm" asChild className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+            <Link href="/">← Voltar para a Home</Link>
+          </Button>
         </div>
         {/* Cabeçalho da notícia */}
         <header className="mb-8">
