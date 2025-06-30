@@ -6,8 +6,18 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, RefreshCw } from "lucide-react"
 import Link from "next/link"
 
+interface NoticiaPreview {
+  titulo?: string;
+  resumo?: string;
+  conteudo?: string;
+  categoria?: string;
+  imagem_url?: string;
+  status?: string;
+  autor?: string;
+}
+
 export default function PreviewNoticiaAdmin() {
-  const [noticia, setNoticia] = useState<any | null>(null)
+  const [noticia, setNoticia] = useState<NoticiaPreview | null>(null)
   const [loading, setLoading] = useState(true)
 
   const loadPreview = () => {

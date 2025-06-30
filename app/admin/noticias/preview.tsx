@@ -1,8 +1,18 @@
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
+interface NoticiaPreview {
+  titulo?: string;
+  resumo?: string;
+  conteudo?: string;
+  categoria?: string;
+  imagem_url?: string;
+  status?: string;
+  autor?: string;
+}
+
 export default function PreviewNoticiaAdmin() {
-  const [noticia, setNoticia] = useState<any | null>(null)
+  const [noticia, setNoticia] = useState<NoticiaPreview | null>(null)
 
   useEffect(() => {
     // Lê os dados do formulário do localStorage

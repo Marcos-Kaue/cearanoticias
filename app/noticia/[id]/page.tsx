@@ -8,6 +8,7 @@ import Instagram from "lucide-react/dist/esm/icons/instagram"
 import Whatsapp from "lucide-react/dist/esm/icons/whatsapp"
 import React from "react"
 import { Metadata } from 'next'
+import Link from "next/link"
 
 async function getNoticia(id: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
@@ -39,7 +40,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
   }
 
   // Embaralhar patrocinadores para garantir aleatoriedade em cada local
-  function shuffleArray(array: any[]) {
+  function shuffleArray<T>(array: T[]): T[] {
     const arr = [...array]
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
@@ -70,9 +71,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
       <div className="max-w-4xl mx-auto">
         {/* Botão de voltar para a página inicial */}
         <div className="mb-4">
-          <a href="/" className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors font-medium">
-            ← Voltar para a página inicial
-          </a>
+          <Link href="/" className="text-red-600 hover:underline mb-4 inline-block">← Voltar para a Home</Link>
         </div>
         {/* Cabeçalho da notícia */}
         <header className="mb-8">
@@ -90,7 +89,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Compartilhar no WhatsApp"
             >
-              <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8 object-contain" />
+              <Image src="/whatsapp.png" alt="WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" />
             </a>
             <a
               href="https://www.instagram.com/cearanograuce?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
@@ -99,7 +98,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Ver nosso Instagram"
             >
-              <img src="/instagram.png" alt="Instagram" className="w-8 h-8 object-contain" />
+              <Image src="/instagram.png" alt="Instagram" width={32} height={32} className="w-8 h-8 object-contain" />
             </a>
           </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>
@@ -113,7 +112,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               alt={noticia.titulo}
               width={800}
               height={400}
-              className="w-full h-64 md:h-96 object-cover rounded-lg"
+              className="w-full h-64 md:h-96 object-cover rounded-lg mb-6"
             />
           </div>
         )}

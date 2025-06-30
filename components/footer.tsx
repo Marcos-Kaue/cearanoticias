@@ -4,11 +4,9 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Patrocinador } from "@/lib/supabase"
-import { cn } from "@/lib/utils"
 
 export default function Footer() {
   const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])
-  const [loading, setLoading] = useState(true)
 
   // Carregar patrocinadores ativos
   const loadPatrocinadores = async () => {
@@ -20,8 +18,6 @@ export default function Footer() {
       }
     } catch (error) {
       console.error('Erro ao carregar patrocinadores:', error)
-    } finally {
-      setLoading(false)
     }
   }
 

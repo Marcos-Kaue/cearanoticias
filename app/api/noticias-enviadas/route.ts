@@ -90,7 +90,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
     if (error) throw error
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao buscar notícias enviadas' }, { status: 500 })
   }
 }

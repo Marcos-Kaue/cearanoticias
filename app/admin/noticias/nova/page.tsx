@@ -180,9 +180,16 @@ export default function NovaNoticia() {
                   placeholder="URL da imagem (preenchido automaticamente ao fazer upload)"
                   className="mt-2 w-full"
                 />
-                {formData.imagem_url && (
+                {imagePreview && (
                   <div className="mt-2">
-                    <img src={formData.imagem_url} alt="Preview" className="h-20 rounded border w-full" />
+                    <span className="text-xs text-gray-500 block mb-1">Pré-visualização:</span>
+                    <Image
+                      src={imagePreview}
+                      alt="Pré-visualização da imagem"
+                      width={180}
+                      height={120}
+                      style={{ objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
+                    />
                   </div>
                 )}
               </div>
@@ -237,24 +244,6 @@ export default function NovaNoticia() {
               </Button>
             </CardContent>
           </Card>
-
-          {/* Preview da imagem */}
-          {imagePreview && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Preview da Imagem</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Image
-                  src={imagePreview || "/placeholder.svg"}
-                  alt="Preview"
-                  width={300}
-                  height={200}
-                  className="w-full h-32 object-cover rounded"
-                />
-              </CardContent>
-            </Card>
-          )}
 
           <Card>
             <CardHeader>

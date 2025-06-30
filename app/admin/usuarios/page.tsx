@@ -164,12 +164,12 @@ export default function AdminUsuarios() {
       <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
         <h3 className="font-medium text-blue-900 mb-2">Como adicionar usuários:</h3>
         <ol className="text-sm text-blue-700 space-y-1">
-          <li>1. Clique em "Adicionar Usuário" (abre o Supabase)</li>
+          <li>1. Clique em &quot;Adicionar Usuário&quot; (abre o Supabase)</li>
           <li>2. Vá em Authentication → Users</li>
-          <li>3. Clique em "Add User"</li>
+          <li>3. Clique em &quot;Add User&quot;</li>
           <li>4. Preencha email e senha</li>
-          <li>5. Marque "Email Confirmed"</li>
-          <li>6. Clique em "Create User"</li>
+          <li>5. Marque &quot;Email Confirmed&quot;</li>
+          <li>6. Clique em &quot;Create User&quot;</li>
         </ol>
       </div>
     </div>

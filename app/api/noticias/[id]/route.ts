@@ -16,7 +16,7 @@ export async function GET(
     if (error) throw error
     
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Notícia não encontrada' }, { status: 404 })
   }
 }
@@ -41,7 +41,7 @@ export async function PUT(
     if (error) throw error
 
     return NextResponse.json(data[0])
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao atualizar notícia' }, { status: 500 })
   }
 }
@@ -60,7 +60,7 @@ export async function DELETE(
     if (error) throw error
     
     return NextResponse.json({ message: 'Notícia deletada com sucesso' })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao deletar notícia' }, { status: 500 })
   }
 } 

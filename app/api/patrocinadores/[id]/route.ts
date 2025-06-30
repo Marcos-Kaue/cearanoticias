@@ -16,8 +16,8 @@ export async function GET(
     if (error) throw error
     
     return NextResponse.json(data)
-  } catch (error) {
-    return NextResponse.json({ error: 'Patrocinador não encontrado' }, { status: 404 })
+  } catch {
+    return NextResponse.json({ error: 'Erro ao buscar patrocinador' }, { status: 500 })
   }
 }
 
@@ -41,7 +41,7 @@ export async function PUT(
     if (error) throw error
     
     return NextResponse.json(data[0])
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao atualizar patrocinador' }, { status: 500 })
   }
 }
@@ -60,7 +60,7 @@ export async function DELETE(
     if (error) throw error
     
     return NextResponse.json({ message: 'Patrocinador deletado com sucesso' })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao deletar patrocinador' }, { status: 500 })
   }
 } 

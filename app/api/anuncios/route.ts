@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
     
     return NextResponse.json(data)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao buscar anúncios' }, { status: 500 })
   }
 }
@@ -49,16 +49,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data[0])
   } catch (error) {
     // Melhor tratamento de erro
-    let errorObj: any = {
+    let errorObj: { message: string; details?: string; code?: string; hint?: string; raw?: unknown } = {
       message: 'Erro desconhecido',
       raw: error
     };
     if (error && typeof error === 'object') {
+      const err = error as { message?: string; details?: string; code?: string; hint?: string };
       errorObj = {
-        message: (error as any).message || 'Erro desconhecido',
-        details: (error as any).details,
-        code: (error as any).code,
-        hint: (error as any).hint,
+        message: err.message || 'Erro desconhecido',
+        details: err.details,
+        code: err.code,
+        hint: err.hint,
         raw: error
       };
     } else if (typeof error === 'string') {

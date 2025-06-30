@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface NoticiaEnviada {
   id: number
@@ -19,7 +19,6 @@ export default function AdminNoticiasEnviadas() {
   const [loading, setLoading] = useState(true)
   const [enviandoId, setEnviandoId] = useState<number | null>(null)
   const [msg, setMsg] = useState("")
-  const router = useRouter()
 
   useEffect(() => {
     async function fetchNoticias() {
@@ -83,11 +82,12 @@ export default function AdminNoticiasEnviadas() {
                 <span className="text-xs text-gray-500">Enviada em {new Date(n.created_at).toLocaleString("pt-BR")}</span>
               </div>
               {n.imagem_url && (
-                <img
+                <Image
                   src={n.imagem_url}
                   alt={n.titulo}
-                  style={{ maxWidth: 120, maxHeight: 80, objectFit: 'contain', marginBottom: 8, borderRadius: 8 }}
-                  className="mb-2"
+                  width={80}
+                  height={80}
+                  className="w-20 h-20 object-cover rounded-lg border mb-2"
                 />
               )}
               <div className="mb-2 text-gray-700 whitespace-pre-line">{n.texto}</div>

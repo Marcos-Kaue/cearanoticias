@@ -8,7 +8,7 @@ import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react"
 export default function DebugPanel() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
-  const [details, setDetails] = useState<any>(null)
+  const [details, setDetails] = useState<unknown>(null)
 
   const testConnection = async () => {
     setStatus('loading')

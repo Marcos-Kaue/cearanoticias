@@ -10,9 +10,7 @@ const nextConfig = {
     unoptimized: true,
   },
   // Configurações para melhorar o comportamento em produção
-  experimental: {
-    serverComponentsExternalPackages: ['@supabase/ssr'],
-  },
+  serverExternalPackages: ['@supabase/ssr'],
   // Configuração para forçar revalidação
   async headers() {
     return [

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,29 +30,23 @@ export default function AdminNoticias() {
   const [loading, setLoading] = useState(true)
 
   // Carregar notícias
-  const loadNoticias = async (status = filterStatus) => {
+  const loadNoticias = useCallback(async () => {
     setLoading(true)
     try {
-      let statusParam = ''
-      if (status === 'Todos') statusParam = 'todos'
-      else if (status === 'Publicado') statusParam = 'publicado'
-      else if (status === 'Rascunho') statusParam = 'rascunho'
-      else if (status === 'Arquivado') statusParam = 'arquivado'
-      const response = await fetch(`/api/noticias?status=${statusParam}`)
-      if (response.ok) {
-        const data = await response.json()
-        setNoticias(data)
-      }
+      const statusParam = filterStatus === "Todos" ? "todos" : filterStatus.toLowerCase();
+      const res = await fetch("/api/noticias?status=" + statusParam)
+      const data = await res.json()
+      setNoticias(data)
     } catch (error) {
-      console.error('Erro ao carregar notícias:', error)
+      setNoticias([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [filterStatus])
 
   useEffect(() => {
-    loadNoticias(filterStatus)
-  }, [filterStatus])
+    loadNoticias()
+  }, [loadNoticias])
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja deletar esta notícia?')) return

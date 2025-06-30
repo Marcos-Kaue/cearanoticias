@@ -64,7 +64,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
     fetchNoticia()
   }, [params.id])
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
 
     if (field === "imagem_url") {
@@ -193,10 +193,12 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                 {imagePreview && (
                   <div className="mt-2">
                     <span className="text-xs text-gray-500 block mb-1">Pré-visualização:</span>
-                    <img
+                    <Image
                       src={imagePreview}
                       alt="Pré-visualização da imagem"
-                      style={{ maxWidth: 180, maxHeight: 120, objectFit: 'contain', borderRadius: 8, border: '1px solid #eee' }}
+                      width={180}
+                      height={120}
+                      style={{ objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
                     />
                   </div>
                 )}

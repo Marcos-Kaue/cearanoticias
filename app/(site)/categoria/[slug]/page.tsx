@@ -52,8 +52,9 @@ const capitalize = (s: string) => {
 }
 
 export default async function CategoriaPage({ params }: { params: { slug: string } }) {
-  const noticias = await getNoticiasPorCategoria(params.slug)
-  const nomeCategoria = capitalize(decodeURIComponent(params.slug))
+  const { slug } = await params
+  const noticias = await getNoticiasPorCategoria(slug)
+  const nomeCategoria = capitalize(decodeURIComponent(slug))
 
   return (
     <div className="container mx-auto px-4 py-8">

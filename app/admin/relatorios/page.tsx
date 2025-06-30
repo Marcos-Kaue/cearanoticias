@@ -3,10 +3,27 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { addDays, startOfDay, startOfWeek, startOfMonth, isAfter } from "date-fns"
+import { startOfDay, startOfWeek, startOfMonth, isAfter } from "date-fns"
 
-// Função utilitária para agrupar visualizações por mês
-function getVisualizacoesPorMes(noticias: any[]) {
+interface Noticia {
+  id: number;
+  titulo: string;
+  resumo: string;
+  imagem_url: string | null;
+  created_at: string;
+  categoria: string;
+  visualizacoes?: number;
+  status?: string;
+}
+
+interface Patrocinador {
+  id: number;
+  nome: string;
+  logo_url: string | null;
+  link_site?: string;
+}
+
+function getVisualizacoesPorMes(noticias: Noticia[]): [string, number][] {
   const meses: { [key: string]: number } = {}
   noticias.forEach(n => {
     if (!n.created_at) return
@@ -29,12 +46,12 @@ function NumeroFormatado({valor}:{valor:number}) {
 }
 
 export default function AdminRelatorios() {
-  const [noticias, setNoticias] = useState<any[]>([])
-  const [patrocinadores, setPatrocinadores] = useState<any[]>([])
+  const [noticias, setNoticias] = useState<Noticia[]>([])
+  const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])
   const [loading, setLoading] = useState(true)
   const [periodo, setPeriodo] = useState<Periodo>("tudo")
-  const [visualizacoesPorMes, setVisualizacoesPorMes] = useState<any[]>([])
-  const [rankingMaisLidas, setRankingMaisLidas] = useState<any[]>([])
+  const [visualizacoesPorMes, setVisualizacoesPorMes] = useState<[string, number][]>([])
+  const [rankingMaisLidas, setRankingMaisLidas] = useState<Noticia[]>([])
 
   // Mapear label do período
   const labelPeriodo = {

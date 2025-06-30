@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
@@ -36,7 +36,7 @@ async function getNoticias(): Promise<Noticia[]> {
     console.log(`Encontradas ${data?.length || 0} notícias publicadas`)
     
     // Filtra apenas notícias publicadas
-    const noticiasPublicadas = data.filter((noticia: any) => noticia.status === 'publicado')
+    const noticiasPublicadas = data.filter((noticia: Noticia) => noticia.status === 'publicado')
     console.log(`Notícias publicadas: ${noticiasPublicadas.length}`)
     
     return noticiasPublicadas
@@ -81,7 +81,8 @@ export const metadata = {
 }
 
 export default async function HomePage({ searchParams }: { searchParams?: { q?: string } }) {
-  const q = searchParams?.q || ""
+  const awaitedSearchParams = await searchParams
+  const q = awaitedSearchParams?.q || ""
   const noticias = await getNoticias()
   const patrocinadores = await getPatrocinadores()
 
@@ -126,7 +127,7 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
   const outrasNoticias = noticiasFiltradas.slice(1)
 
   // Função para embaralhar patrocinadores
-  function shuffleArray(array: any[]) {
+  function shuffleArray<T>(array: T[]): T[] {
     const arr = [...array]
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
@@ -140,11 +141,6 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
 
   // Ranking de notícias mais lidas (top 3)
   const rankingMaisLidas = [...noticias]
-    .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
-    .slice(0, 3)
-
-  // Ranking compacto (top 3)
-  const rankingMaisLidasCompacto = [...noticias]
     .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
     .slice(0, 3)
 

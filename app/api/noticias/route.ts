@@ -4,10 +4,20 @@ import { cookies } from 'next/headers'
 
 // GET - Listar notícias
 export async function GET(request: NextRequest) {
+  const requestCookies = cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookies() as any }
+    {
+      cookies: {
+        async get(name: string) {
+          const cookieStore = await cookies();
+          return cookieStore.get(name)?.value;
+        },
+        set() {},
+        remove() {},
+      },
+    }
   )
   try {
     const { searchParams } = new URL(request.url)
@@ -58,17 +68,27 @@ export async function GET(request: NextRequest) {
 
 // POST - Criar nova notícia
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient(
+  const requestCookies2 = cookies();
+  const supabase2 = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookies() as any }
+    {
+      cookies: {
+        async get(name: string) {
+          const cookieStore = await cookies();
+          return cookieStore.get(name)?.value;
+        },
+        set() {},
+        remove() {},
+      },
+    }
   )
   try {
     const body = await request.json()
     
     console.log('API Notícias - Criando nova notícia:', { titulo: body.titulo, status: body.status })
     
-    const { data, error } = await supabase
+    const { data, error } = await supabase2
       .from('noticias')
       .insert([{
         ...body,

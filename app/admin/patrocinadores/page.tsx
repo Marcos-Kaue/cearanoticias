@@ -180,7 +180,13 @@ export default function AdminPatrocinadores() {
               />
               {formData.logo_url && (
                 <div className="mt-2">
-                  <img src={formData.logo_url} alt="Preview" className="h-20 rounded border" />
+                  <Image
+                    src={formData.logo_url}
+                    alt="Preview"
+                    width={96}
+                    height={96}
+                    className="w-24 h-24 object-contain rounded border"
+                  />
                 </div>
               )}
             </div>
@@ -224,11 +230,11 @@ export default function AdminPatrocinadores() {
                 <div key={patrocinador.id} className="flex flex-col sm:flex-row items-center justify-between p-4 border rounded-lg">
                   <div className="flex flex-col sm:flex-row items-center gap-4">
                     <Image
-                      src={patrocinador.logo_url || "/placeholder.svg"}
+                      src={patrocinador.logo_url || "/placeholder-logo.png"}
                       alt={patrocinador.nome}
-                      width={80}
-                      height={40}
-                      className="h-10 w-20 object-contain border rounded mx-auto sm:mx-0"
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 object-contain rounded border"
                     />
                     <div className="text-center sm:text-left">
                       <h3 className="font-medium">{patrocinador.nome}</h3>

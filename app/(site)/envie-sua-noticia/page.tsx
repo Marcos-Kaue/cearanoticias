@@ -3,21 +3,21 @@
 import { useState } from "react"
 
 export default function EnvieSuaNoticia() {
-  const [form, setForm] = useState({ nome: "", telefone: "", titulo: "", texto: "", imagem: null })
+  const [form, setForm] = useState<{ nome: string; telefone: string; titulo: string; texto: string; imagem: File | null }>({ nome: "", telefone: "", titulo: "", texto: "", imagem: null })
   const [enviando, setEnviando] = useState(false)
   const [sucesso, setSucesso] = useState("")
   const [erro, setErro] = useState("")
 
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, files } = e.target as HTMLInputElement
     if (name === "imagem") {
-      setForm(f => ({ ...f, imagem: files[0] }))
+      setForm(f => ({ ...f, imagem: files ? files[0] : null }))
     } else {
       setForm(f => ({ ...f, [name]: value }))
     }
   }
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setEnviando(true)
     setSucesso("")

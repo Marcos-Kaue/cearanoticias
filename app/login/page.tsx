@@ -154,7 +154,7 @@ export default function LoginPage() {
             <p className="text-xs text-blue-700 mb-2">
               1. Acesse o Supabase Dashboard<br />
               2. Vá em Authentication → Users<br />
-              3. Clique em "Add User"<br />
+              3. Clique em &quot;Add User&quot;<br />
               4. Use seu Gmail e senha preferida
             </p>
             <p className="text-xs text-blue-700">
