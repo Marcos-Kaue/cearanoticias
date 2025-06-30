@@ -21,7 +21,11 @@ export async function middleware(request: NextRequest) {
       },
     }
   )
-  await supabase.auth.getSession()
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    // Redireciona para login se não estiver autenticado
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
   return response
 }
 

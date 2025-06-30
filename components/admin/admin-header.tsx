@@ -7,9 +7,22 @@ import { ExternalLink, User, LogOut } from "lucide-react"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { supabase } from "@/lib/supabase"
+import { useEffect, useState } from "react"
 
 export default function AdminHeader() {
   const router = useRouter()
+  const [userName, setUserName] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        // Tenta pegar o nome do usuário do metadata, senão usa o email
+        setUserName(user.user_metadata?.name || user.email)
+      }
+    }
+    getUser()
+  }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -35,7 +48,7 @@ export default function AdminHeader() {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 text-sm text-white">
             <User className="w-4 h-4 text-white" />
-            <span>Admin</span>
+            <span>{userName ? userName : "Usuário"}</span>
           </div>
           <ThemeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-gray-200">
