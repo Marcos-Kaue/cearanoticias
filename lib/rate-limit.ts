@@ -14,7 +14,7 @@ export function createRateLimiter(config: RateLimitConfig) {
   const { windowMs, maxRequests, message = 'Muitas requisições. Tente novamente em alguns minutos.' } = config
 
   return function rateLimit(request: NextRequest) {
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
     const now = Date.now()
     
     // Limpar entradas expiradas

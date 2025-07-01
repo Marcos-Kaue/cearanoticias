@@ -11,32 +11,38 @@ import { useEffect, useState } from "react"
 
 // Função para extrair o nome do usuário de forma inteligente
 function extractUserName(user: unknown): string {
-  // 1. Tenta pegar o nome completo do metadata
-  if (user && typeof user === 'object' && user.user_metadata?.full_name) {
-    return user.user_metadata.full_name
+  if (
+    user &&
+    typeof user === 'object' &&
+    'user_metadata' in user &&
+    user.user_metadata &&
+    typeof user.user_metadata === 'object'
+  ) {
+    const meta = user.user_metadata as Record<string, unknown>;
+    if (typeof meta.full_name === 'string' && meta.full_name) {
+      return meta.full_name;
+    }
+    if (typeof meta.name === 'string' && meta.name) {
+      return meta.name;
+    }
+    if (typeof meta.user_name === 'string' && meta.user_name) {
+      return meta.user_name;
+    }
   }
-  
-  // 2. Tenta pegar o nome do metadata
-  if (user && typeof user === 'object' && user.user_metadata?.name) {
-    return user.user_metadata.name
-  }
-  
-  // 3. Tenta pegar o nome do perfil
-  if (user && typeof user === 'object' && user.user_metadata?.user_name) {
-    return user.user_metadata.user_name
-  }
-  
-  // 4. Se não tiver nome, extrai do email (remove o domínio)
-  if (user && typeof user === 'object' && user.email) {
-    const emailName = user.email.split('@')[0]
-    // Capitaliza a primeira letra e substitui pontos/underscores por espaços
+
+  if (
+    user &&
+    typeof user === 'object' &&
+    'email' in user &&
+    typeof user.email === 'string'
+  ) {
+    const emailName = user.email.split('@')[0];
     return emailName
       .replace(/[._-]/g, ' ')
-      .replace(/\b\w/g, (l: string) => l.toUpperCase())
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
   }
-  
-  // 5. Fallback
-  return "Usuário"
+
+  return "Usuário";
 }
 
 export default function AdminHeader() {

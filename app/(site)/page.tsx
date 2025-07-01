@@ -22,9 +22,8 @@ export const metadata = {
   description: 'Seu portal de notícias do Ceará atualizado',
 }
 
-export default async function HomePage({ searchParams }: { searchParams?: Promise<{ q?: string }> }) {
-  const awaitedSearchParams = searchParams ? await searchParams : undefined
-  const q = awaitedSearchParams?.q || ""
+export default async function HomePage({ searchParams }: { searchParams?: { q?: string } }) {
+  const q = searchParams?.q || ""
   const baseUrl = await getBaseUrl()
   const noticias = await getNoticias(baseUrl)
   const patrocinadores = await getPatrocinadores(baseUrl)

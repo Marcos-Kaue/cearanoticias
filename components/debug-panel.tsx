@@ -8,7 +8,7 @@ import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react"
 export default function DebugPanel() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
-  const [details, setDetails] = useState<unknown>(null)
+  const [details, setDetails] = useState<any>(null)
 
   const testConnection = async () => {
     setStatus('loading')
@@ -59,7 +59,7 @@ export default function DebugPanel() {
           
           {details && (
             <div className="bg-gray-100 p-3 rounded text-sm">
-              <pre className="whitespace-pre-wrap">{JSON.stringify(details, null, 2)}</pre>
+              <pre className="whitespace-pre-wrap">{JSON.stringify(details as any, null, 2)}</pre>
             </div>
           )}
           
