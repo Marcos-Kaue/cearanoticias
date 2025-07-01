@@ -31,8 +31,8 @@ const categorias = [
   "Internacional",
 ]
 
-export default async function EditarNoticiaPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function EditarNoticiaPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const [formData, setFormData] = useState({
     titulo: "",
     resumo: "",
