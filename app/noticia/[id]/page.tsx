@@ -176,7 +176,9 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
 }
 
 // SEO dinâmico para cada notícia
-export async function generateMetadata({ params }): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: { id: string } }
+): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
   const noticia = await getNoticia(baseUrl, params.id)
   if (!noticia) return { title: 'Notícia não encontrada' }
