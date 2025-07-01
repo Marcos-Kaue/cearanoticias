@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
+import { headers } from 'next/headers'
 
 interface Noticia {
   id: number
@@ -12,20 +13,24 @@ interface Noticia {
   categoria: string
 }
 
+async function getBaseUrl() {
+  const headersList = await headers()
+  const host = headersList.get('host')
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
+  return `${protocol}://${host}`
+}
+
 async function getNoticiasPorCategoria(categoria: string): Promise<Noticia[]> {
   try {
-    // Decodifica o slug da categoria para lidar com acentos e caracteres especiais
-    // Capitaliza a primeira letra e coloca acento se necessário
-const categoriaMap: Record<string, string> = {
-    politica: "Política",
-    economia: "Economia",
-    esportes: "Esportes",
-    tecnologia: "Tecnologia",
-    saude: "Saúde",
-    // adicione outras categorias se necessário
-  }
-  const categoriaDecodificada = categoriaMap[categoria.toLowerCase()] || categoria
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+    const categoriaMap: Record<string, string> = {
+      politica: "Política",
+      economia: "Economia",
+      esportes: "Esportes",
+      tecnologia: "Tecnologia",
+      saude: "Saúde",
+    }
+    const categoriaDecodificada = categoriaMap[categoria.toLowerCase()] || categoria
+    const baseUrl = await getBaseUrl()
     const res = await fetch(
       `${baseUrl}/api/noticias?status=publicado&categoria=${categoriaDecodificada}`,
       {
@@ -36,14 +41,11 @@ const categoriaMap: Record<string, string> = {
         },
       }
     )
-
     if (!res.ok) {
       console.error("Falha ao buscar notícias:", res.statusText)
       return []
     }
-
     const data = await res.json()
-    // Filtra notícias com data de hoje ou do passado - REMOVIDO PARA EXIBIR TUDO
     return data
   } catch (error) {
     console.error("Ocorreu um erro ao buscar notícias:", error)
@@ -58,9 +60,20 @@ const capitalize = (s: string) => {
 }
 
 export default async function CategoriaPage({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
   const noticias = await getNoticiasPorCategoria(slug)
   const nomeCategoria = capitalize(decodeURIComponent(slug))
+
+  if (!noticias) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="flex justify-center items-center h-40">
+          <span className="loader inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+        </div>
+        <p className="text-gray-600 mt-4">Carregando notícias...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,7 +91,7 @@ export default async function CategoriaPage({ params }: { params: { slug: string
               <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
                 <Image
                   src={noticia.imagem_url || "/placeholder.svg"}
-                  alt={noticia.titulo}
+                  alt={noticia.titulo || "Imagem da notícia"}
                   width={300}
                   height={200}
                   className="w-full h-48 object-cover"

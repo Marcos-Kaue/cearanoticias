@@ -83,6 +83,17 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
   const noticias = await getNoticias()
   const patrocinadores = await getPatrocinadores()
 
+  if (!noticias) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="flex justify-center items-center h-40">
+          <span className="loader inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+        </div>
+        <p className="text-gray-600 mt-4">Carregando notícias...</p>
+      </div>
+    )
+  }
+
   if (!noticias || noticias.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
@@ -150,7 +161,7 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
           <div className="relative w-full h-64 md:h-96">
             <Image
               src={noticiaDestaque.imagem_url || "/placeholder.svg"}
-              alt={noticiaDestaque.titulo}
+              alt={noticiaDestaque.titulo || "Imagem da notícia em destaque"}
               fill
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
               priority
@@ -224,7 +235,7 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
                 <div className="relative w-full h-48">
                   <Image
                     src={noticia.imagem_url || "/placeholder.svg"}
-                    alt={noticia.titulo}
+                    alt={noticia.titulo || "Imagem da notícia"}
                     fill
                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                   />

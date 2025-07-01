@@ -92,7 +92,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Compartilhar no WhatsApp"
             >
-              <Image src="/whatsapp.png" alt="WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
+              <Image src="/whatsapp.png" alt="Ícone do WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
             <a
               href="https://www.instagram.com/cearanograuce?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
@@ -101,7 +101,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Ver nosso Instagram"
             >
-              <Image src="/instagram.png" alt="Instagram" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
+              <Image src="/instagram.png" alt="Ícone do Instagram" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
           </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>
@@ -112,10 +112,10 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
           <div className="mb-8">
             <Image
               src={noticia.imagem_url || "/placeholder.svg"}
-              alt={noticia.titulo}
+              alt={noticia.titulo || "Imagem da notícia"}
               width={800}
               height={400}
-              className="w-full h-64 md:h-96 object-cover rounded-lg mb-6"
+              className="w-full h-auto rounded-lg object-cover mb-6"
             />
           </div>
         )}
