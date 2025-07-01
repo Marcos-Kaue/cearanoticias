@@ -10,7 +10,8 @@
     "test:api": "node scripts/test-api.js",
     "debug:vercel": "node scripts/debug-vercel.js",
     "check:noticias": "node scripts/check-noticias.js",
-    "test:buckets": "node scripts/test-buckets.js"
+    "test:buckets": "node scripts/test-buckets.js",
+    "vercel-build": "rm -rf .next/types && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
