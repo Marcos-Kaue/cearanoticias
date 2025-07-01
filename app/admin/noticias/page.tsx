@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Search, Edit, Trash2, Eye, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { Noticia } from "@/lib/supabase"
+import { Noticia } from "@/lib/types"
+import { useNoticias } from "@/hooks/use-noticias"
 
 // Componente separado para formatar data
 function DataFormatada({ dateStr }: { dateStr: string | null | undefined }) {
@@ -26,41 +27,21 @@ function DataFormatada({ dateStr }: { dateStr: string | null | undefined }) {
 export default function AdminNoticias() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("Todos")
-  const [noticias, setNoticias] = useState<Noticia[]>([])
-  const [loading, setLoading] = useState(true)
+  const { noticias, loading, error, reloadNoticias } = useNoticias(filterStatus)
 
-  // Carregar notícias
-  const loadNoticias = useCallback(async () => {
-    setLoading(true)
-    try {
-      const statusParam = filterStatus === "Todos" ? "todos" : filterStatus.toLowerCase();
-      const res = await fetch("/api/noticias?status=" + statusParam)
-      const data = await res.json()
-      setNoticias(data)
-    } catch (error) {
-      setNoticias([])
-    } finally {
-      setLoading(false)
-    }
-  }, [filterStatus])
-
-  useEffect(() => {
-    loadNoticias()
-  }, [loadNoticias])
+  if (loading) return <div className="text-center py-8">Carregando notícias...</div>
+  if (error) return <div className="text-center text-red-600 py-8">{error}</div>
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja deletar esta notícia?')) return
-    
     try {
       const response = await fetch(`/api/noticias/${id}`, {
         method: 'DELETE',
       })
-
       if (!response.ok) {
         throw new Error('Erro ao deletar notícia')
       }
-
-      await loadNoticias() // Recarregar lista
+      await reloadNoticias() // Recarregar lista
     } catch (error) {
       console.error('Erro ao deletar notícia:', error)
       alert('Erro ao deletar notícia. Tente novamente.')
@@ -133,11 +114,7 @@ export default function AdminNoticias() {
           <CardTitle>Suas Notícias ({filteredNoticias.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="text-center py-8">
-              <p>Carregando notícias...</p>
-            </div>
-          ) : noticias.length === 0 ? (
+          {noticias.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">Nenhuma notícia cadastrada ainda.</p>
               <Button asChild className="mt-4 w-full sm:w-auto">

@@ -146,8 +146,8 @@ export default function NovaNoticia() {
 
               <div>
                 <Label htmlFor="categoria">Categoria</Label>
-                <Select value={formData.categoria} onValueChange={(value) => handleInputChange("categoria", value)} className="w-full">
-                  <SelectTrigger>
+                <Select value={formData.categoria} onValueChange={(value) => handleInputChange("categoria", value)}>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>

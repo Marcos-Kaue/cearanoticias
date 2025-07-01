@@ -7,31 +7,15 @@ import { RelativeTime } from "@/components/relative-time"
 import React from "react"
 import { Metadata } from 'next'
 import Link from "next/link"
-
-async function getNoticia(id: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const res = await fetch(`${baseUrl}/api/noticias/${id}`, { next: { revalidate: 60 } })
-  if (!res.ok) return null
-  return await res.json()
-}
-
-async function getPatrocinadores() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
-    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { next: { revalidate: 60 } })
-    if (!res.ok) return []
-    const data = await res.json()
-    return data
-  } catch {
-    return []
-  }
-}
+import { Noticia, Patrocinador } from "@/lib/types"
+import { getNoticia, getPatrocinadores } from "@/lib/api"
 
 export default async function NoticiaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
   const [noticia, patrocinadores] = await Promise.all([
-    getNoticia(id),
-    getPatrocinadores()
+    getNoticia(baseUrl, id),
+    getPatrocinadores(baseUrl)
   ])
 
   if (!noticia) {
@@ -76,7 +60,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
         <header className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <span className="bg-red-600 text-white px-3 py-1 text-sm font-semibold rounded">{noticia.categoria}</span>
-            <RelativeTime dateString={noticia.created_at} className="text-gray-500" />
+            <RelativeTime dateString={noticia.created_at || ""} className="text-gray-500" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">{noticia.titulo}</h1>
           {/* Botão de compartilhamento WhatsApp */}
@@ -111,9 +95,9 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
         <div className="mb-8">
           {patrocinadoresAleatorios.length > 0 ? (
             <AdBanner
-              imageUrl={getPatrocinadorAleatorio(0).logo_url || "/placeholder.svg"}
-              link={getPatrocinadorAleatorio(0).link_site || "#"}
-              title={getPatrocinadorAleatorio(0).nome}
+              imageUrl={getPatrocinadorAleatorio(0)?.logo_url || "/placeholder.svg"}
+              link={getPatrocinadorAleatorio(0)?.link_site || "#"}
+              title={getPatrocinadorAleatorio(0)?.nome || "Patrocinador"}
               className="w-full"
             />
           ) : (
@@ -138,9 +122,9 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
                     <div className="my-8">
                       {patrocinadoresAleatorios.length > 0 ? (
                         <AdBanner
-                          imageUrl={getPatrocinadorAleatorio(1).logo_url || "/placeholder.svg"}
-                          link={getPatrocinadorAleatorio(1).link_site || "#"}
-                          title={getPatrocinadorAleatorio(1).nome}
+                          imageUrl={getPatrocinadorAleatorio(1)?.logo_url || "/placeholder.svg"}
+                          link={getPatrocinadorAleatorio(1)?.link_site || "#"}
+                          title={getPatrocinadorAleatorio(1)?.nome || "Patrocinador"}
                           className="w-full"
                         />
                       ) : (
@@ -166,9 +150,9 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
                   <h3 className="font-bold mb-4 text-gray-900">Publicidade</h3>
                   {patrocinadoresAleatorios.length > 0 ? (
                     <AdBanner
-                      imageUrl={getPatrocinadorAleatorio(2).logo_url || "/placeholder.svg"}
-                      link={getPatrocinadorAleatorio(2).link_site || "#"}
-                      title={getPatrocinadorAleatorio(2).nome}
+                      imageUrl={getPatrocinadorAleatorio(2)?.logo_url || "/placeholder.svg"}
+                      link={getPatrocinadorAleatorio(2)?.link_site || "#"}
+                      title={getPatrocinadorAleatorio(2)?.nome || "Patrocinador"}
                       className="w-full"
                       onlyImage
                     />
@@ -193,24 +177,11 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
 
 // SEO dinâmico para cada notícia
 export async function generateMetadata({ params }): Promise<Metadata> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const noticia = await getNoticia(params.id)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
+  const noticia = await getNoticia(baseUrl, params.id)
   if (!noticia) return { title: 'Notícia não encontrada' }
   return {
     title: noticia.titulo,
-    description: noticia.resumo || noticia.titulo,
-    openGraph: {
-      title: noticia.titulo,
-      description: noticia.resumo || noticia.titulo,
-      images: noticia.imagem_url ? [noticia.imagem_url] : [`${baseUrl}/placeholder.jpg`],
-      url: `${baseUrl}/noticia/${noticia.id}`,
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: noticia.titulo,
-      description: noticia.resumo || noticia.titulo,
-      images: noticia.imagem_url ? [noticia.imagem_url] : [`${baseUrl}/placeholder.jpg`],
-    },
+    description: noticia.resumo,
   }
 }

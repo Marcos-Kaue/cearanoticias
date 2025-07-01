@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Patrocinador } from "@/lib/supabase"
+import { Patrocinador } from "@/lib/types"
 
 export default function Footer() {
   const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])

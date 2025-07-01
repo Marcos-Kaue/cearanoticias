@@ -44,7 +44,7 @@ export default function PreviewNoticiaAdmin() {
           <div className="mb-8">
             <Image
               src={noticia.imagem_url}
-              alt={noticia.titulo}
+              alt={noticia.titulo || "Imagem da notícia"}
               width={800}
               height={400}
               className="w-full h-64 md:h-96 object-cover rounded-lg"

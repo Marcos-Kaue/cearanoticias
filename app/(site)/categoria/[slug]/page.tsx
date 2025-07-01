@@ -3,54 +3,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
 import { headers } from 'next/headers'
-
-interface Noticia {
-  id: number
-  titulo: string
-  resumo: string
-  imagem_url: string | null
-  created_at: string
-  categoria: string
-}
+import { Noticia } from "@/lib/types"
+import { getNoticiasPorCategoria } from "@/lib/api"
 
 async function getBaseUrl() {
   const headersList = await headers()
   const host = headersList.get('host')
   const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
   return `${protocol}://${host}`
-}
-
-async function getNoticiasPorCategoria(categoria: string): Promise<Noticia[]> {
-  try {
-    const categoriaMap: Record<string, string> = {
-      politica: "Política",
-      economia: "Economia",
-      esportes: "Esportes",
-      tecnologia: "Tecnologia",
-      saude: "Saúde",
-    }
-    const categoriaDecodificada = categoriaMap[categoria.toLowerCase()] || categoria
-    const baseUrl = await getBaseUrl()
-    const res = await fetch(
-      `${baseUrl}/api/noticias?status=publicado&categoria=${categoriaDecodificada}`,
-      {
-        next: { revalidate: 60 },
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-        },
-      }
-    )
-    if (!res.ok) {
-      console.error("Falha ao buscar notícias:", res.statusText)
-      return []
-    }
-    const data = await res.json()
-    return data
-  } catch (error) {
-    console.error("Ocorreu um erro ao buscar notícias:", error)
-    return []
-  }
 }
 
 // Função para capitalizar a primeira letra
@@ -61,7 +21,8 @@ const capitalize = (s: string) => {
 
 export default async function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const noticias = await getNoticiasPorCategoria(slug)
+  const baseUrl = await getBaseUrl()
+  const noticias = await getNoticiasPorCategoria(baseUrl, slug)
   const nomeCategoria = capitalize(decodeURIComponent(slug))
 
   if (!noticias) {
@@ -102,7 +63,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
                       {noticia.categoria}
                     </span>
                     <RelativeTime
-                      dateString={noticia.created_at}
+                      dateString={noticia.created_at || ""}
                       className="text-gray-500 text-xs"
                     />
                   </div>

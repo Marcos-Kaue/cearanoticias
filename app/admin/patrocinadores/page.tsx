@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,14 +8,14 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Plus, Edit, Trash2, ExternalLink } from "lucide-react"
 import Image from "next/image"
-import { Patrocinador } from "@/lib/supabase"
+import { Patrocinador } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
+import { usePatrocinadores } from "@/hooks/use-patrocinadores"
 
 export default function AdminPatrocinadores() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])
-  const [loading, setLoading] = useState(true)
+  const { patrocinadores, loading, error, reloadPatrocinadores } = usePatrocinadores()
   const [formData, setFormData] = useState({
     nome: "",
     logo_url: "",
@@ -24,24 +24,8 @@ export default function AdminPatrocinadores() {
     ordem_exibicao: 0,
   })
 
-  // Carregar patrocinadores
-  const loadPatrocinadores = async () => {
-    try {
-      const response = await fetch('/api/patrocinadores')
-      if (response.ok) {
-        const data = await response.json()
-        setPatrocinadores(data)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar patrocinadores:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadPatrocinadores()
-  }, [])
+  if (loading) return <div className="text-center py-8">Carregando patrocinadores...</div>
+  if (error) return <div className="text-center text-red-600 py-8">{error}</div>
 
   const handleEdit = (patrocinador: Patrocinador) => {
     setFormData(patrocinador)
@@ -66,7 +50,7 @@ export default function AdminPatrocinadores() {
         throw new Error('Erro ao salvar patrocinador')
       }
 
-      await loadPatrocinadores() // Recarregar lista
+      await reloadPatrocinadores() // Recarregar lista
       setShowForm(false)
       setEditingId(null)
       setFormData({ nome: "", logo_url: "", link_site: "", ativo: true, ordem_exibicao: 0 })
@@ -88,7 +72,7 @@ export default function AdminPatrocinadores() {
         throw new Error('Erro ao deletar patrocinador')
       }
 
-      await loadPatrocinadores() // Recarregar lista
+      await reloadPatrocinadores() // Recarregar lista
     } catch (error) {
       console.error('Erro ao deletar patrocinador:', error)
       alert('Erro ao deletar patrocinador. Tente novamente.')
@@ -216,11 +200,7 @@ export default function AdminPatrocinadores() {
           <CardTitle>Patrocinadores Cadastrados</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="text-center py-8">
-              <p>Carregando patrocinadores...</p>
-            </div>
-          ) : patrocinadores.length === 0 ? (
+          {patrocinadores.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">Nenhum patrocinador cadastrado ainda.</p>
             </div>

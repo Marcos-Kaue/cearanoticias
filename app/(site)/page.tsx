@@ -4,16 +4,9 @@ import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
 import AdBanner from "@/components/ad-banner"
 import { headers } from 'next/headers'
-
-interface Noticia {
-  id: number
-  titulo: string
-  resumo: string
-  imagem_url: string | null
-  created_at: string
-  categoria: string
-  visualizacoes?: number
-}
+import { Patrocinador } from "@/lib/types"
+import { Noticia } from "@/lib/types"
+import { getNoticias, getPatrocinadores } from "@/lib/api"
 
 // Função para obter a base da URL de forma assíncrona
 async function getBaseUrl() {
@@ -21,54 +14,6 @@ async function getBaseUrl() {
   const host = headersList.get('host')
   const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
   return `${protocol}://${host}`
-}
-
-// Busca notícias publicadas usando fetch absoluto (compatível SSR e produção)
-async function getNoticias(): Promise<Noticia[]> {
-  try {
-    const baseUrl = await getBaseUrl()
-    const res = await fetch(`${baseUrl}/api/noticias?status=publicado`, {
-      next: { revalidate: 60 },
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-      },
-    })
-    if (!res.ok) {
-      console.error('Falha ao buscar notícias:', res.status, res.statusText)
-      return []
-    }
-    const data = await res.json()
-    // Garante que só retorna notícias publicadas
-    const noticiasPublicadas = data.filter((noticia: Noticia) => noticia.status === 'publicado')
-    return noticiasPublicadas
-  } catch (error) {
-    console.error('Ocorreu um erro ao buscar notícias:', error)
-    return []
-  }
-}
-
-// Busca patrocinadores ativos usando fetch absoluto
-async function getPatrocinadores() {
-  try {
-    const baseUrl = await getBaseUrl()
-    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, {
-      next: { revalidate: 60 },
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-      },
-    })
-    if (!res.ok) {
-      console.error('Falha ao buscar patrocinadores:', res.status, res.statusText)
-      return []
-    }
-    const data = await res.json()
-    return data
-  } catch (error) {
-    console.error('Erro ao buscar patrocinadores:', error)
-    return []
-  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -80,8 +25,9 @@ export const metadata = {
 export default async function HomePage({ searchParams }: { searchParams?: Promise<{ q?: string }> }) {
   const awaitedSearchParams = searchParams ? await searchParams : undefined
   const q = awaitedSearchParams?.q || ""
-  const noticias = await getNoticias()
-  const patrocinadores = await getPatrocinadores()
+  const baseUrl = await getBaseUrl()
+  const noticias = await getNoticias(baseUrl)
+  const patrocinadores = await getPatrocinadores(baseUrl)
 
   if (!noticias) {
     return (
@@ -144,8 +90,8 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
     return arr
   }
 
-  const patrocinadoresAleatorios = shuffleArray(patrocinadores)
-  const patrocinadorBanner = patrocinadoresAleatorios[0] || null
+  const patrocinadoresAleatorios: Patrocinador[] = shuffleArray(patrocinadores)
+  const patrocinadorBanner: Patrocinador | null = patrocinadoresAleatorios[0] || null
 
   // Ranking de notícias mais lidas (top 3)
   const rankingMaisLidas = [...noticias]
@@ -180,7 +126,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                 </p>
               )}
               <RelativeTime
-                dateString={noticiaDestaque.created_at}
+                dateString={noticiaDestaque.created_at || ""}
                 className="text-gray-200 text-xs"
               />
             </div>
@@ -252,7 +198,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   </p>
                   <div className="flex items-center justify-between mt-auto">
                     <RelativeTime
-                      dateString={noticia.created_at}
+                      dateString={noticia.created_at || ""}
                       className="text-gray-400 text-xs"
                     />
                     <span className="inline-block bg-red-50 text-red-700 text-xs font-semibold rounded px-3 py-1 group-hover:bg-red-600 group-hover:text-white transition-colors cursor-pointer">

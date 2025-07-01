@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, Users, Eye, TrendingUp, Calendar } from "lucide-react"
 import DebugPanel from "@/components/debug-panel"
-import { Noticia, Patrocinador } from "@/lib/supabase"
+import { Noticia, Patrocinador } from "@/lib/types"
 
 function NumeroFormatado({valor}:{valor:number}) {
   const [num, setNum] = useState('')

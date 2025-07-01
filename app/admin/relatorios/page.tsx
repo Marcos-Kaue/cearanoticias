@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import { startOfDay, startOfWeek, startOfMonth, isAfter } from "date-fns"
+import { Patrocinador } from "@/lib/types"
 
 interface Noticia {
   id: number;
@@ -14,13 +15,6 @@ interface Noticia {
   categoria: string;
   visualizacoes?: number;
   status?: string;
-}
-
-interface Patrocinador {
-  id: number;
-  nome: string;
-  logo_url: string | null;
-  link_site?: string;
 }
 
 function getVisualizacoesPorMes(noticias: Noticia[]): [string, number][] {

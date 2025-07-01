@@ -165,9 +165,8 @@ export default async function EditarNoticiaPage({ params }: { params: Promise<{ 
                 <Select
                   value={formData.categoria}
                   onValueChange={value => handleInputChange("categoria", value)}
-                  className="w-full"
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
