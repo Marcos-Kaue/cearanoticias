@@ -2,13 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-ssr'
 
 // GET - Buscar notícia por ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   const supabase = await createSupabaseServerClient()
   try {
-    const { id } = await params
+    // Extrair o id da URL
+    const id = request.url.split('/').pop()
     const { data, error } = await supabase
       .from('noticias')
       .select('*')
