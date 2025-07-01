@@ -10,8 +10,8 @@ import Link from "next/link"
 import { Noticia, Patrocinador } from "@/lib/types"
 import { getNoticia, getPatrocinadores } from "@/lib/api"
 
-export default async function NoticiaPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function NoticiaPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
   const [noticia, patrocinadores] = await Promise.all([
     getNoticia(baseUrl, id),
