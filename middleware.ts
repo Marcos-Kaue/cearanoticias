@@ -1,8 +1,28 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { rateLimiters } from '@/lib/rate-limit'
 
 export async function middleware(request: NextRequest) {
+  // Rate limiting para APIs
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    // Rate limit mais restritivo para autenticação
+    if (request.nextUrl.pathname.startsWith('/api/auth/')) {
+      const rateLimitResult = rateLimiters.auth(request)
+      if (rateLimitResult) return rateLimitResult
+    }
+    
+    // Rate limit para outras APIs
+    const rateLimitResult = rateLimiters.api(request)
+    if (rateLimitResult) return rateLimitResult
+  }
+
+  // Rate limiting para rotas admin (proteção adicional)
+  if (request.nextUrl.pathname.startsWith('/admin/')) {
+    const rateLimitResult = rateLimiters.api(request)
+    if (rateLimitResult) return rateLimitResult
+  }
+
   const response = NextResponse.next()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

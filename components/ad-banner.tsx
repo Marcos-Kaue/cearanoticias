@@ -22,7 +22,7 @@ export default function AdBanner({ imageUrl, link, title, buttonText = "Saiba ma
             width={300}
             height={250}
             className="w-full h-auto object-contain rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
-            priority
+            sizes="(max-width: 640px) 100vw, 300px"
           />
         </Link>
       </div>
@@ -40,7 +40,7 @@ export default function AdBanner({ imageUrl, link, title, buttonText = "Saiba ma
             width={600}
             height={150}
             className="w-full h-28 object-cover"
-            priority
+            sizes="(max-width: 640px) 100vw, 600px"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/60 px-2">
             <span className="text-white text-base font-bold text-center break-words w-full leading-snug drop-shadow">
@@ -58,6 +58,7 @@ export default function AdBanner({ imageUrl, link, title, buttonText = "Saiba ma
               width={120}
               height={60}
               className="h-12 w-auto object-contain"
+              sizes="120px"
             />
           </div>
           {/* Título */}

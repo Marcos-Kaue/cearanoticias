@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-ssr'
+import { withRateLimit, rateLimiters } from '@/lib/rate-limit'
 
 // GET - Listar notícias
 export async function GET(request: NextRequest) {
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST - Criar nova notícia
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const supabase = await createSupabaseServerClient()
   try {
     const body = await request.json()
@@ -81,4 +82,4 @@ export async function POST(request: NextRequest) {
     console.error('Erro detalhado ao criar notícia:', error)
     return NextResponse.json({ error: 'Erro ao criar notícia', detalhe: String(error) }, { status: 500 })
   }
-} 
+}, rateLimiters.create) 

@@ -72,7 +72,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md mx-4 shadow-xl">
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">
-            <Image src="/logo.png" alt="Logo" width={200} height={60} className="h-12 w-auto" />
+            <Image src="/logo.png" alt="Logo" width={200} height={60} className="h-12 w-auto" sizes="200px" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">Painel Administrativo</CardTitle>
           <CardDescription className="text-gray-600">Faça login para acessar o painel</CardDescription>

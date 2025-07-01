@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
 import AdBanner from "@/components/ad-banner"
+import { headers } from 'next/headers'
 
 interface Noticia {
   id: number
@@ -14,62 +15,58 @@ interface Noticia {
   visualizacoes?: number
 }
 
+// Função para obter a base da URL de forma assíncrona
+async function getBaseUrl() {
+  const headersList = await headers()
+  const host = headersList.get('host')
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
+  return `${protocol}://${host}`
+}
+
+// Busca notícias publicadas usando fetch absoluto (compatível SSR e produção)
 async function getNoticias(): Promise<Noticia[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-    console.log('Buscando notícias de:', `${baseUrl}/api/noticias`)
-    
+    const baseUrl = await getBaseUrl()
     const res = await fetch(`${baseUrl}/api/noticias?status=publicado`, {
-      cache: "no-store",
+      cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
       },
     })
-
     if (!res.ok) {
-      console.error("Falha ao buscar notícias:", res.statusText)
+      console.error('Falha ao buscar notícias:', res.status, res.statusText)
       return []
     }
-
     const data = await res.json()
-    console.log(`Encontradas ${data?.length || 0} notícias publicadas`)
-    
-    // Filtra apenas notícias publicadas
+    // Garante que só retorna notícias publicadas
     const noticiasPublicadas = data.filter((noticia: Noticia) => noticia.status === 'publicado')
-    console.log(`Notícias publicadas: ${noticiasPublicadas.length}`)
-    
     return noticiasPublicadas
   } catch (error) {
-    console.error("Ocorreu um erro ao buscar notícias:", error)
+    console.error('Ocorreu um erro ao buscar notícias:', error)
     return []
   }
 }
 
-// Função para buscar patrocinadores ativos
+// Busca patrocinadores ativos usando fetch absoluto
 async function getPatrocinadores() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-    console.log('Buscando patrocinadores de:', `${baseUrl}/api/patrocinadores`)
-    
-    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { 
-      cache: "no-store",
+    const baseUrl = await getBaseUrl()
+    const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, {
+      cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
       },
     })
-    
     if (!res.ok) {
-      console.error("Falha ao buscar patrocinadores:", res.statusText)
+      console.error('Falha ao buscar patrocinadores:', res.status, res.statusText)
       return []
     }
-    
     const data = await res.json()
-    console.log(`Encontrados ${data?.length || 0} patrocinadores ativos`)
     return data
   } catch (error) {
-    console.error("Erro ao buscar patrocinadores:", error)
+    console.error('Erro ao buscar patrocinadores:', error)
     return []
   }
 }

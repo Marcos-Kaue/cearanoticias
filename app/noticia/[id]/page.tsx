@@ -12,7 +12,7 @@ import { Metadata } from 'next'
 import Link from "next/link"
 
 async function getNoticia(id: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   const res = await fetch(`${baseUrl}/api/noticias/${id}`, { next: { revalidate: 60 } })
   if (!res.ok) return null
   return await res.json()
@@ -20,7 +20,7 @@ async function getNoticia(id: string) {
 
 async function getPatrocinadores() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
     const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, { next: { revalidate: 60 } })
     if (!res.ok) return []
     const data = await res.json()
@@ -63,7 +63,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
   // Função para montar os links de compartilhamento
   const shareUrl = typeof window !== 'undefined'
     ? window.location.href
-    : `${process.env.NEXT_PUBLIC_SITE_URL || "https://cearanoticias.com"}/noticia/${noticia.id}`
+    : `${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`
   const shareText = `${noticia.titulo} - ${shareUrl}`
   const instagramUser = "seuusuario" // Troque pelo usuário do portal
 
@@ -92,7 +92,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Compartilhar no WhatsApp"
             >
-              <Image src="/whatsapp.png" alt="WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" />
+              <Image src="/whatsapp.png" alt="WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
             <a
               href="https://www.instagram.com/cearanograuce?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
@@ -101,7 +101,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               className="rounded-full p-2 flex items-center justify-center"
               title="Ver nosso Instagram"
             >
-              <Image src="/instagram.png" alt="Instagram" width={32} height={32} className="w-8 h-8 object-contain" />
+              <Image src="/instagram.png" alt="Instagram" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
           </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>
@@ -206,7 +206,7 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
 
 // SEO dinâmico para cada notícia
 export async function generateMetadata({ params }): Promise<Metadata> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   const noticia = await getNoticia(params.id)
   if (!noticia) return { title: 'Notícia não encontrada' }
   return {

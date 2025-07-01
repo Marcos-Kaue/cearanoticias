@@ -68,6 +68,23 @@ export default function DebugPanel() {
             Testar Novamente
           </Button>
         </div>
+
+        {/* Seção de Rate Limiting */}
+        <div className="bg-white p-4 rounded-lg shadow mb-4">
+          <h3 className="text-lg font-semibold mb-3 text-gray-800">Rate Limiting</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Status:</span>
+              <span className="text-sm font-medium text-green-600">Ativo</span>
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              <p>• APIs: 100 req/15min</p>
+              <p>• Auth: 5 req/15min</p>
+              <p>• Criação: 10 req/hora</p>
+              <p>• Uploads: 20 req/hora</p>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

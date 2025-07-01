@@ -64,7 +64,7 @@ export default function AdminHeader() {
       <div className="flex items-center justify-between h-full px-6">
         <div className="flex items-center gap-4">
           <Link href="/admin" className="flex items-center">
-            <Image src="/logo.png" alt="Logo" height={32} width={120} className="h-8 w-auto" />
+            <Image src="/logo.png" alt="Logo" height={32} width={120} className="h-8 w-auto" sizes="120px" />
           </Link>
           <div className="h-6 w-px bg-red-400" />
           <Button variant="ghost" size="sm" asChild className="text-white hover:text-gray-200">

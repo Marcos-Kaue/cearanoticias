@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-ssr'
+import { withRateLimit, rateLimiters } from '@/lib/rate-limit'
 
 // GET - Listar patrocinadores
 export async function GET(request: NextRequest) {
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST - Criar novo patrocinador
-export async function POST(request: NextRequest) {
+export const POST = withRateLimit(async (request: NextRequest) => {
   const supabase = await createSupabaseServerClient()
   try {
     const body = await request.json()
@@ -48,4 +49,4 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: 'Erro ao criar patrocinador' }, { status: 500 })
   }
-} 
+}, rateLimiters.create) 
