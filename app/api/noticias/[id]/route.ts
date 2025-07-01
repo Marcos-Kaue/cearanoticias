@@ -47,13 +47,11 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE - Deletar notícia
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   const supabase = await createSupabaseServerClient()
   try {
-    const { id } = await params
+    // Extrair o id da URL
+    const id = request.url.split('/').pop()
     const { error } = await supabase
       .from('noticias')
       .delete()
