@@ -174,7 +174,7 @@ export default function LoginPage() {
                 Para que apareça seu nome ao invés do email no painel:<br />
                 1. No Supabase, clique no seu usuário<br />
                 2. Em "User Metadata", adicione:<br />
-                <code className="bg-green-100 px-1 rounded">"name": "Seu Nome"</code><br />
+                <code className="bg-green-100 px-1 rounded">&quot;name&quot;: &quot;Seu Nome&quot;</code><br />
                 3. Salve as alterações
               </p>
             </div>

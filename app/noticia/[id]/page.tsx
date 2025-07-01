@@ -4,9 +4,6 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import AdBanner from "@/components/ad-banner"
 import { RelativeTime } from "@/components/relative-time"
-import Facebook from "lucide-react/dist/esm/icons/facebook"
-import Instagram from "lucide-react/dist/esm/icons/instagram"
-import Whatsapp from "lucide-react/dist/esm/icons/whatsapp"
 import React from "react"
 import { Metadata } from 'next'
 import Link from "next/link"
@@ -30,9 +27,10 @@ async function getPatrocinadores() {
   }
 }
 
-export default async function NoticiaPage({ params }: { params: { id: string } }) {
+export default async function NoticiaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const [noticia, patrocinadores] = await Promise.all([
-    getNoticia(params.id),
+    getNoticia(id),
     getPatrocinadores()
   ])
 
@@ -64,8 +62,6 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
   const shareUrl = typeof window !== 'undefined'
     ? window.location.href
     : `${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`
-  const shareText = `${noticia.titulo} - ${shareUrl}`
-  const instagramUser = "seuusuario" // Troque pelo usuário do portal
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,15 +89,6 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               title="Compartilhar no WhatsApp"
             >
               <Image src="/whatsapp.png" alt="Ícone do WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
-            </a>
-            <a
-              href="https://www.instagram.com/cearanograuce?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full p-2 flex items-center justify-center"
-              title="Ver nosso Instagram"
-            >
-              <Image src="/instagram.png" alt="Ícone do Instagram" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
           </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>

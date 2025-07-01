@@ -31,7 +31,8 @@ const categorias = [
   "Internacional",
 ]
 
-export default function EditarNoticia({ params }: { params: { id: string } }) {
+export default async function EditarNoticiaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const [formData, setFormData] = useState({
     titulo: "",
     resumo: "",
@@ -47,7 +48,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchNoticia() {
       try {
-        const response = await fetch(`/api/noticias/${params.id}`)
+        const response = await fetch(`/api/noticias/${id}`)
         if (!response.ok) throw new Error("Notícia não encontrada")
         const data = await response.json()
         setFormData(data)
@@ -62,7 +63,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
       }
     }
     fetchNoticia()
-  }, [params.id])
+  }, [id])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -80,7 +81,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
         status,
       }
 
-      const response = await fetch(`/api/noticias/${params.id}`, {
+      const response = await fetch(`/api/noticias/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -268,7 +269,7 @@ export default function EditarNoticia({ params }: { params: { id: string } }) {
                 onClick={async () => {
                   try {
                     const noticiaData = { ...formData, status: 'arquivado' };
-                    const response = await fetch(`/api/noticias/${params.id}`, {
+                    const response = await fetch(`/api/noticias/${id}`, {
                       method: 'PUT',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(noticiaData),

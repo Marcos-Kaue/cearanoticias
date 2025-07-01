@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, FileText, Users, Settings, BarChart3, ImageIcon, Tag, Menu, X, Shield } from "lucide-react"
+import { LayoutDashboard, FileText, Users, Settings, BarChart3, Tag, Menu, X } from "lucide-react"
 import { useState } from "react"
 
 const menuItems = [

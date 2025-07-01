@@ -10,24 +10,24 @@ import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 
 // Função para extrair o nome do usuário de forma inteligente
-function extractUserName(user: any): string {
+function extractUserName(user: unknown): string {
   // 1. Tenta pegar o nome completo do metadata
-  if (user.user_metadata?.full_name) {
+  if (user && typeof user === 'object' && user.user_metadata?.full_name) {
     return user.user_metadata.full_name
   }
   
   // 2. Tenta pegar o nome do metadata
-  if (user.user_metadata?.name) {
+  if (user && typeof user === 'object' && user.user_metadata?.name) {
     return user.user_metadata.name
   }
   
   // 3. Tenta pegar o nome do perfil
-  if (user.user_metadata?.user_name) {
+  if (user && typeof user === 'object' && user.user_metadata?.user_name) {
     return user.user_metadata.user_name
   }
   
   // 4. Se não tiver nome, extrai do email (remove o domínio)
-  if (user.email) {
+  if (user && typeof user === 'object' && user.email) {
     const emailName = user.email.split('@')[0]
     // Capitaliza a primeira letra e substitui pontos/underscores por espaços
     return emailName
