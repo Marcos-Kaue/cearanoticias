@@ -22,13 +22,11 @@ export async function GET(request: NextRequest) {
 }
 
 // PUT - Atualizar notícia
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest) {
   const supabase = await createSupabaseServerClient()
   try {
-    const { id } = await params
+    // Extrair o id da URL
+    const id = request.url.split('/').pop()
     const body = await request.json()
 
     const { data, error } = await supabase
