@@ -28,7 +28,13 @@ const categoriaMap: Record<string, string> = {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
     const res = await fetch(
       `${baseUrl}/api/noticias?status=publicado&categoria=${categoriaDecodificada}`,
-      { cache: "no-store" }
+      {
+        next: { revalidate: 60 },
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      }
     )
 
     if (!res.ok) {

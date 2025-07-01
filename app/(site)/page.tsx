@@ -28,7 +28,7 @@ async function getNoticias(): Promise<Noticia[]> {
   try {
     const baseUrl = await getBaseUrl()
     const res = await fetch(`${baseUrl}/api/noticias?status=publicado`, {
-      cache: 'no-store',
+      next: { revalidate: 60 },
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
@@ -53,7 +53,7 @@ async function getPatrocinadores() {
   try {
     const baseUrl = await getBaseUrl()
     const res = await fetch(`${baseUrl}/api/patrocinadores?ativo=true`, {
-      cache: 'no-store',
+      next: { revalidate: 60 },
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
