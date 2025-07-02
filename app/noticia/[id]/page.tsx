@@ -1,13 +1,9 @@
-"use client"
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import AdBanner from "@/components/ad-banner"
 import { RelativeTime } from "@/components/relative-time"
-import React, { useEffect, useState } from "react"
-import { Metadata } from 'next'
 import Link from "next/link"
 import { getNoticia, getPatrocinadores } from "@/lib/api"
 
@@ -24,21 +20,14 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
   }
 
   // Remover o shuffle para evitar mismatch:
-  // const patrocinadoresAleatorios = shuffleArray(patrocinadores)
   const patrocinadoresAleatorios = patrocinadores;
 
   // Corrigir uso de window/location:
-  const [shareUrl, setShareUrl] = useState(`${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setShareUrl(window.location.href);
-    }
-  }, []);
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`;
 
   // Dividir o conteúdo em parágrafos para inserir anúncios
   const paragrafos = noticia.conteudo ? noticia.conteudo.split("\n\n") : []
 
-  // Função para pegar patrocinador aleatório para cada posição
   function getPatrocinadorAleatorio(index: number) {
     if (!patrocinadoresAleatorios.length) return null
     return patrocinadoresAleatorios[index % patrocinadoresAleatorios.length]

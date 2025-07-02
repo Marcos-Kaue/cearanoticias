@@ -103,14 +103,12 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
       <section className="mb-12">
         <Link href={`/noticia/${noticiaDestaque.id}`}
           className="block group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-150">
-          <div className="relative w-full" style={{ aspectRatio: '16/9', minHeight: 256 }}>
+          <div className="relative w-full aspect-[16/9] min-h-[256px]">
             <Image
               src={noticiaDestaque.imagem_url || "/placeholder.svg"}
               alt={noticiaDestaque.titulo || "Imagem da notícia em destaque"}
-              width={800}
-              height={400}
-              style={{ width: 800, height: 'auto' }}
-              className="w-full h-auto object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
+              fill
+              className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
               priority
               sizes="(max-width: 800px) 100vw, 800px"
             />
@@ -180,14 +178,13 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
             {outrasNoticias.map(noticia => (
               <Link key={noticia.id} href={`/noticia/${noticia.id}`}
                 className="group block rounded-2xl overflow-hidden shadow hover:shadow-xl transition-all duration-150 bg-white">
-                <div className="relative w-full h-48">
+                <div className="relative w-full aspect-[16/9]">
                   <Image
                     src={noticia.imagem_url || "/placeholder.svg"}
                     alt={noticia.titulo || "Imagem da notícia"}
-                    width={800}
-                    height={400}
-                    style={{ width: 800, height: 'auto' }}
-                    className="w-full h-auto object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
+                    fill
+                    className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
+                    sizes="(max-width: 800px) 100vw, 800px"
                   />
                   <span className="absolute top-3 left-3 bg-blue-600/90 text-white text-xs font-bold rounded px-2 py-1 shadow">
                     {noticia.categoria}
@@ -205,7 +202,7 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
                       dateString={noticia.created_at || ""}
                       className="text-gray-400 text-xs"
                     />
-                    <span className="inline-block bg-red-50 text-red-700 text-xs font-semibold rounded px-3 py-1 group-hover:bg-red-600 group-hover:text-white transition-colors cursor-pointer">
+                    <span className="inline-block bg-red-50 text-red-700 text-xs font-semibold rounded px-3 py-1 group-hover:bg-red-600 group-hover:text-white transition-colors">
                       Leia mais
                     </span>
                   </div>
