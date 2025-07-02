@@ -38,10 +38,7 @@ export async function GET(request: NextRequest) {
     
     // Adicionar headers para evitar cache
     const response = NextResponse.json(data)
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-    response.headers.set('Pragma', 'no-cache')
-    response.headers.set('Expires', '0')
-    
+    response.headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120')
     return response
   } catch (error) {
     console.error('Erro detalhado ao buscar notícias:', error)

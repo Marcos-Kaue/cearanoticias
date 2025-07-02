@@ -22,7 +22,9 @@ export async function GET(request: NextRequest) {
     
     if (error) throw error
     
-    return NextResponse.json(data)
+    const response = NextResponse.json(data)
+    response.headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120')
+    return response
   } catch {
     return NextResponse.json({ error: 'Erro ao buscar patrocinadores' }, { status: 500 })
   }
