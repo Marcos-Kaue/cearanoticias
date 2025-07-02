@@ -47,7 +47,9 @@ export default function PreviewNoticiaAdmin() {
               alt={noticia.titulo || "Imagem da notícia"}
               width={800}
               height={400}
-              className="w-full h-64 md:h-96 object-cover rounded-lg"
+              style={{ width: 800, height: 'auto' }}
+              className="w-full h-auto object-cover rounded-lg"
+              sizes="(max-width: 800px) 100vw, 800px"
             />
           </div>
         )}

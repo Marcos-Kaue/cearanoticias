@@ -43,9 +43,11 @@ export default function Header() {
               <Image
                 src="/logo.png"
                 alt="Ceará No Grau Logo"
-                width={50}
-                height={50}
-                className="w-20 h-20 md:w-20 md:h-20 rounded-lg object-cover"
+                width={80}
+                height={24}
+                style={{ width: 80, height: 'auto' }}
+                className="h-6 w-auto"
+                sizes="80px"
               />
             </span>
             <div className={`flex flex-col transition-all duration-700 delay-150 ${showAnim ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`} style={{willChange: 'opacity, transform'}}>

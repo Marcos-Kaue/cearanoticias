@@ -11,6 +11,7 @@ import { Save, Eye, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { supabase } from "@/lib/supabase"
+import { useToast } from "@/hooks/use-toast"
 
 const categorias = [
   "Política",
@@ -46,6 +47,8 @@ export default function NovaNoticia() {
   })
 
   const [imagePreview, setImagePreview] = useState("")
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -63,14 +66,40 @@ export default function NovaNoticia() {
     if (url) {
       setFormData((prev) => ({ ...prev, imagem_url: url }))
       setImagePreview(url)
+      toast({
+        title: "Upload de imagem realizado!",
+        description: "A imagem foi enviada com sucesso.",
+      });
+    } else {
+      toast({
+        title: "Erro ao fazer upload da imagem!",
+        description: "Tente novamente.",
+      });
     }
   }
 
   const handleSave = async (status: string) => {
+    // Validação de campos obrigatórios
+    if (!formData.titulo.trim() || !formData.conteudo.trim() || !formData.categoria.trim()) {
+      toast({
+        title: "Preencha todos os campos obrigatórios!",
+        description: "Título, conteúdo e categoria são obrigatórios.",
+      });
+      return;
+    }
+    if (!formData.imagem_url || !formData.imagem_url.startsWith('http')) {
+      toast({
+        title: "Adicione uma imagem válida!",
+        description: "Faça upload ou cole uma URL válida.",
+      });
+      setLoading(false);
+      return;
+    }
+    setLoading(true)
     try {
       const noticiaData = { 
         ...formData, 
-        status,
+        status: status.trim().toLowerCase(),
         autor: "Admin", // Você pode adicionar um campo de autor depois
         visualizacoes: 0
       }
@@ -84,17 +113,39 @@ export default function NovaNoticia() {
       })
 
       if (!response.ok) {
-        throw new Error('Erro ao salvar notícia')
+        const errorData = await response.json()
+        throw new Error(errorData?.detalhe || 'Erro ao salvar notícia')
       }
 
       const savedNoticia = await response.json()
-      console.log('Notícia salva com sucesso:', savedNoticia)
-      
-      // Redirecionar para a lista de notícias
-      window.location.href = '/admin/noticias'
-    } catch (error) {
-      console.error('Erro ao salvar notícia:', error)
-      alert('Erro ao salvar notícia. Tente novamente.')
+      toast({
+        title: "Notícia salva com sucesso!",
+        description: `Título: ${savedNoticia.titulo}`,
+      });
+      if (status === "rascunho") {
+        setFormData({
+          titulo: "",
+          resumo: "",
+          conteudo: "",
+          categoria: "",
+          imagem_url: "",
+          status: "publicado",
+        })
+        setImagePreview("")
+        setLoading(false)
+        return
+      }
+      // Redirecionar para a lista de notícias após um pequeno delay
+      setTimeout(() => {
+        window.location.href = '/admin/noticias'
+      }, 1200);
+    } catch (error: unknown) {
+      toast({
+        title: "Erro ao salvar notícia",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -184,11 +235,11 @@ export default function NovaNoticia() {
                   <div className="mt-2">
                     <span className="text-xs text-gray-500 block mb-1">Pré-visualização:</span>
                     <Image
-                      src={imagePreview}
+                      src={imagePreview || "/placeholder.svg"}
                       alt="Pré-visualização da imagem"
                       width={180}
                       height={120}
-                      style={{ objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
+                      style={{ width: 180, height: 'auto', objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
                     />
                   </div>
                 )}
@@ -222,12 +273,12 @@ export default function NovaNoticia() {
               <Button
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
                 onClick={() => handleSave("publicado")}
-                disabled={!formData.titulo || !formData.conteudo}
+                disabled={loading}
               >
                 <Save className="w-4 h-4 mr-2" />
-                Publicar Notícia
+                {loading ? "Salvando..." : "Publicar Notícia"}
               </Button>
-              <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")}>Salvar Rascunho</Button>
+              <Button variant="outline" className="w-full" onClick={() => handleSave("rascunho")} disabled={loading}>Salvar Rascunho</Button>
               
               {/* Botão Visualizar */}
               <Button

@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Search, Edit, Trash2, Eye, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { Noticia } from "@/lib/types"
 import { useNoticias } from "@/hooks/use-noticias"
+import { useToast } from "@/hooks/use-toast"
 
 // Componente separado para formatar data
 function DataFormatada({ dateStr }: { dateStr: string | null | undefined }) {
@@ -28,24 +28,37 @@ export default function AdminNoticias() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("Todos")
   const { noticias, loading, error, reloadNoticias } = useNoticias(filterStatus)
+  const { toast } = useToast();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   if (loading) return <div className="text-center py-8">Carregando notícias...</div>
   if (error) return <div className="text-center text-red-600 py-8">{error}</div>
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Tem certeza que deseja deletar esta notícia?')) return
+    if (!confirm('Tem certeza que deseja deletar esta notícia?')) return;
+    setDeletingId(id);
+    toast({
+      title: "Deletando notícia...",
+      description: "Aguarde...",
+    });
     try {
       const response = await fetch(`/api/noticias/${id}`, {
         method: 'DELETE',
-      })
+      });
       if (!response.ok) {
-        throw new Error('Erro ao deletar notícia')
+        throw new Error('Erro ao deletar notícia');
       }
-      await reloadNoticias() // Recarregar lista
+      toast({
+        title: "Notícia deletada com sucesso!",
+      });
+      await reloadNoticias();
     } catch (error) {
-      console.error('Erro ao deletar notícia:', error)
-      alert('Erro ao deletar notícia. Tente novamente.')
+      toast({
+        title: "Erro ao deletar notícia",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
+    setDeletingId(null);
   }
 
   const filteredNoticias = noticias.filter((noticia) => {
@@ -132,10 +145,10 @@ export default function AdminNoticias() {
                   <Image
                     src={noticia.imagem_url || "/placeholder.svg"}
                     alt={noticia.titulo}
-                      width={80}
-                      height={60}
-                      style={{ objectFit: 'cover', borderRadius: 8 }}
-                      className="flex-shrink-0"
+                    width={80}
+                    height={60}
+                    style={{ objectFit: 'cover', borderRadius: 8, width: 80, height: 'auto' }}
+                    className="flex-shrink-0"
                   />
                   </div>
                   <div className="flex-1 w-full">
@@ -168,7 +181,7 @@ export default function AdminNoticias() {
                         <Edit className="w-4 h-4" />
                       </Link>
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleDelete(noticia.id || 0)} aria-label="Deletar notícia">
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(noticia.id || 0)} aria-label="Deletar notícia" disabled={deletingId === noticia.id}>
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
                   </div>

@@ -124,11 +124,13 @@ export default function PreviewNoticiaAdmin() {
           {noticia.imagem_url && (
             <div className="p-6 pt-0">
               <Image
-                src={noticia.imagem_url}
-                alt={noticia.titulo || 'Imagem da notícia'}
+                src={noticia.imagem_url || "/placeholder.svg"}
+                alt={noticia.titulo || "Imagem da notícia"}
                 width={800}
                 height={400}
-                className="w-full h-64 md:h-96 object-cover rounded-lg"
+                style={{ width: 800, height: 'auto' }}
+                className="w-full h-auto object-cover rounded-lg"
+                sizes="(max-width: 800px) 100vw, 800px"
               />
             </div>
           )}

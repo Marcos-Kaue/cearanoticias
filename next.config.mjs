@@ -1,13 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    unoptimized: true,
+    unoptimized: false,
   },
   // Configurações para melhorar o comportamento em produção
   serverExternalPackages: ['@supabase/ssr'],

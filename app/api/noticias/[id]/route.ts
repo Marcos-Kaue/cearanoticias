@@ -51,16 +51,26 @@ export async function DELETE(request: NextRequest) {
   const supabase = await createSupabaseServerClient()
   try {
     // Extrair o id da URL
-    const id = request.url.split('/').pop()
+    const id = request.url.split('/').pop() || ''
+    if (!id) {
+      console.error('ID não fornecido na URL:', request.url)
+      return NextResponse.json({ error: 'ID não fornecido' }, { status: 400 })
+    }
+    // Tente converter para número, se aplicável
+    const idNum = Number(id)
     const { error } = await supabase
       .from('noticias')
       .delete()
-      .eq('id', id)
+      .eq('id', isNaN(idNum) ? id : idNum)
     
-    if (error) throw error
+    if (error) {
+      console.error('Erro ao deletar notícia:', error)
+      throw error
+    }
     
     return NextResponse.json({ message: 'Notícia deletada com sucesso' })
-  } catch {
+  } catch (err) {
+    console.error('Erro inesperado ao deletar notícia:', err)
     return NextResponse.json({ error: 'Erro ao deletar notícia' }, { status: 500 })
   }
 } 

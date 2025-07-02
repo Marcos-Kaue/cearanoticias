@@ -1,13 +1,14 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import AdBanner from "@/components/ad-banner"
 import { RelativeTime } from "@/components/relative-time"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Metadata } from 'next'
 import Link from "next/link"
-import { Noticia, Patrocinador } from "@/lib/types"
 import { getNoticia, getPatrocinadores } from "@/lib/api"
 
 export default async function NoticiaPage({ params }: { params: { id: string } }) {
@@ -22,16 +23,17 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
     notFound()
   }
 
-  // Embaralhar patrocinadores para garantir aleatoriedade em cada local
-  function shuffleArray<T>(array: T[]): T[] {
-    const arr = [...array]
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  // Remover o shuffle para evitar mismatch:
+  // const patrocinadoresAleatorios = shuffleArray(patrocinadores)
+  const patrocinadoresAleatorios = patrocinadores;
+
+  // Corrigir uso de window/location:
+  const [shareUrl, setShareUrl] = useState(`${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(window.location.href);
     }
-    return arr
-  }
-  const patrocinadoresAleatorios = shuffleArray(patrocinadores)
+  }, []);
 
   // Dividir o conteúdo em parágrafos para inserir anúncios
   const paragrafos = noticia.conteudo ? noticia.conteudo.split("\n\n") : []
@@ -41,11 +43,6 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
     if (!patrocinadoresAleatorios.length) return null
     return patrocinadoresAleatorios[index % patrocinadoresAleatorios.length]
   }
-
-  // Função para montar os links de compartilhamento
-  const shareUrl = typeof window !== 'undefined'
-    ? window.location.href
-    : `${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${noticia.id}`
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -66,13 +63,13 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
           {/* Botão de compartilhamento WhatsApp */}
           <div className="flex gap-3 mb-4">
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(noticia.titulo + ' - ' + (typeof window !== 'undefined' ? window.location.href : (process.env.NEXT_PUBLIC_SITE_URL || 'https://cearanoticias.com') + '/noticia/' + noticia.id))}`}
+              href={`https://wa.me/?text=${encodeURIComponent(noticia.titulo + ' - ' + shareUrl)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full p-2 flex items-center justify-center"
               title="Compartilhar no WhatsApp"
             >
-              <Image src="/whatsapp.png" alt="Ícone do WhatsApp" width={32} height={32} className="w-8 h-8 object-contain" sizes="32px" />
+              <Image src="/whatsapp.png" alt="Ícone do WhatsApp" width={32} height={32} style={{ width: 32, height: 'auto' }} className="w-8 h-8 object-contain" sizes="32px" />
             </a>
           </div>
           <p className="text-xl text-gray-600 leading-relaxed">{noticia.resumo}</p>
@@ -86,7 +83,9 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
               alt={noticia.titulo || "Imagem da notícia"}
               width={800}
               height={400}
-              className="w-full h-auto rounded-lg object-cover mb-6"
+              style={{ width: 800, height: 'auto' }}
+              className="w-full h-auto object-cover rounded-lg"
+              sizes="(max-width: 800px) 100vw, 800px"
             />
           </div>
         )}
@@ -173,17 +172,4 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
       </div>
     </div>
   )
-}
-
-// SEO dinâmico para cada notícia
-export async function generateMetadata(
-  { params }: { params: { id: string } }
-): Promise<Metadata> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
-  const noticia = await getNoticia(baseUrl, params.id)
-  if (!noticia) return { title: 'Notícia não encontrada' }
-  return {
-    title: noticia.titulo,
-    description: noticia.resumo,
-  }
 }

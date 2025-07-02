@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
     
     console.log(`API Notícias - Encontradas ${data?.length || 0} notícias`)
     
-    // Adicionar headers para evitar cache
+    // Adicionar headers para evitar cache (atualização rápida)
     const response = NextResponse.json(data)
-    response.headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120')
+    response.headers.set('Cache-Control', 'public, max-age=5, stale-while-revalidate=10')
     return response
   } catch (error) {
     console.error('Erro detalhado ao buscar notícias:', error)

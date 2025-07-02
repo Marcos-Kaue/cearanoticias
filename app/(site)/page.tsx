@@ -5,7 +5,6 @@ import { RelativeTime } from "@/components/relative-time"
 import AdBanner from "@/components/ad-banner"
 import { headers } from 'next/headers'
 import { Patrocinador } from "@/lib/types"
-import { Noticia } from "@/lib/types"
 import { getNoticias, getPatrocinadores } from "@/lib/api"
 
 // Função para obter a base da URL de forma assíncrona
@@ -89,17 +88,8 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
   const noticiaDestaque = noticiasFiltradas[0]
   const outrasNoticias = noticiasFiltradas.slice(1)
 
-  // Função para embaralhar patrocinadores
-  function shuffleArray<T>(array: T[]): T[] {
-    const arr = [...array]
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
-    }
-    return arr
-  }
-
-  const patrocinadoresAleatorios: Patrocinador[] = shuffleArray(patrocinadores)
+  // Não embaralhe patrocinadores no SSR para evitar hydration mismatch
+  const patrocinadoresAleatorios: Patrocinador[] = patrocinadores;
   const patrocinadorBanner: Patrocinador | null = patrocinadoresAleatorios[0] || null
 
   // Ranking de notícias mais lidas (top 3)
@@ -117,10 +107,12 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
             <Image
               src={noticiaDestaque.imagem_url || "/placeholder.svg"}
               alt={noticiaDestaque.titulo || "Imagem da notícia em destaque"}
-              fill
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-150"
+              width={800}
+              height={400}
+              style={{ width: 800, height: 'auto' }}
+              className="w-full h-auto object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 800px) 100vw, 800px"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6 text-white">
@@ -192,8 +184,10 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
                   <Image
                     src={noticia.imagem_url || "/placeholder.svg"}
                     alt={noticia.titulo || "Imagem da notícia"}
-                    fill
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-150"
+                    width={800}
+                    height={400}
+                    style={{ width: 800, height: 'auto' }}
+                    className="w-full h-auto object-cover rounded-lg group-hover:scale-105 transition-transform duration-150"
                   />
                   <span className="absolute top-3 left-3 bg-blue-600/90 text-white text-xs font-bold rounded px-2 py-1 shadow">
                     {noticia.categoria}
@@ -223,4 +217,4 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
       )}
     </div>
   )
-} 
+}

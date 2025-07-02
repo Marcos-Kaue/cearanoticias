@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { RelativeTime } from "@/components/relative-time"
 import { headers } from 'next/headers'
-import { Noticia } from "@/lib/types"
 import { getNoticiasPorCategoria } from "@/lib/api"
 
 async function getBaseUrl() {
@@ -53,9 +52,11 @@ export default async function CategoriaPage({ params }: { params: { slug: string
                 <Image
                   src={noticia.imagem_url || "/placeholder.svg"}
                   alt={noticia.titulo || "Imagem da notícia"}
-                  width={300}
-                  height={200}
-                  className="w-full h-48 object-cover"
+                  width={800}
+                  height={400}
+                  style={{ width: 800, height: 'auto' }}
+                  className="w-full h-auto object-cover rounded-lg"
+                  sizes="(max-width: 800px) 100vw, 800px"
                 />
                 <CardContent className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center gap-2 mb-2">

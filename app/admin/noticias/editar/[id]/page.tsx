@@ -21,6 +21,7 @@ import {
 import { Save, Eye, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useParams } from "next/navigation"
 
 const categorias = [
   "Política",
@@ -31,8 +32,9 @@ const categorias = [
   "Internacional",
 ]
 
-export default async function EditarNoticiaPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function EditarNoticiaPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [formData, setFormData] = useState({
     titulo: "",
     resumo: "",
@@ -198,7 +200,7 @@ export default async function EditarNoticiaPage({ params }: { params: { id: stri
                       alt="Pré-visualização da imagem"
                       width={180}
                       height={120}
-                      style={{ objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
+                      style={{ width: 180, height: 'auto', objectFit: 'contain', borderRadius: 8, border: '1px solid #eee', maxWidth: 180, maxHeight: 120 }}
                     />
                   </div>
                 )}
@@ -297,6 +299,7 @@ export default async function EditarNoticiaPage({ params }: { params: { id: stri
                   alt="Preview"
                   width={300}
                   height={200}
+                  style={{ width: 300, height: 'auto' }}
                   className="w-full h-32 object-cover rounded"
                 />
               </CardContent>
