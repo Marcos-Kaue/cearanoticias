@@ -6,12 +6,14 @@ import { FileText, Users, Eye, TrendingUp, Calendar } from "lucide-react"
 import DebugPanel from "@/components/debug-panel"
 import { Noticia, Patrocinador } from "@/lib/types"
 
-function NumeroFormatado({valor}:{valor:number}) {
-  const [num, setNum] = useState('')
-  useEffect(() => {
-    setNum(valor.toLocaleString('pt-BR'))
-  }, [valor])
-  return <>{num}</>
+// Função para formatar números grandes
+function NumeroFormatado({ valor }: { valor: number }) {
+  if (valor >= 1000000) {
+    return `${(valor / 1000000).toFixed(1)}M`
+  } else if (valor >= 1000) {
+    return `${(valor / 1000).toFixed(1)}K`
+  }
+  return valor.toString()
 }
 
 export default function AdminDashboard() {
@@ -60,7 +62,8 @@ export default function AdminDashboard() {
           noticiasPublicadas,
         })
         setRecentNews(recent)
-      } catch (e) {
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error)
         // Em caso de erro, zera tudo
         setStats({
           totalNoticias: 0,

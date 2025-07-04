@@ -162,7 +162,6 @@ export default async function HomePage({ searchParams }: { searchParams?: { q?: 
               <Link href={`/noticia/${noticia.id}`} className="flex-1 font-medium text-gray-900 hover:text-red-700 transition-colors">
                 {noticia.titulo}
               </Link>
-              <span className="text-xs text-gray-500 whitespace-nowrap">{noticia.visualizacoes || 0} visualizações</span>
             </li>
           ))}
         </ol>

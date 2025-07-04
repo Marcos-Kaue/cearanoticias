@@ -6,6 +6,7 @@ import AdBanner from "@/components/ad-banner"
 import { RelativeTime } from "@/components/relative-time"
 import Link from "next/link"
 import { getNoticia, getPatrocinadores } from "@/lib/api"
+import VisualizacaoTracker from "./visualizacao-tracker"
 
 export default async function NoticiaPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -35,6 +36,9 @@ export default async function NoticiaPage({ params }: { params: { id: string } }
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Componente para rastrear visualizações */}
+      <VisualizacaoTracker noticiaId={id} />
+      
       <div className="max-w-4xl mx-auto">
         {/* Botão de voltar para a página inicial */}
         <div className="mb-4">

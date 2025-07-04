@@ -11,6 +11,7 @@
     "debug:vercel": "node scripts/debug-vercel.js",
     "check:noticias": "node scripts/check-noticias.js",
     "test:buckets": "node scripts/test-buckets.js",
+    "test:visualizacoes": "node scripts/test-visualizacoes.js",
     "vercel-build": "rm -rf .next/types && next build"
   },
   "dependencies": {

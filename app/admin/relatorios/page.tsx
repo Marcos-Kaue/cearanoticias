@@ -17,6 +17,18 @@ interface Noticia {
   status?: string;
 }
 
+type Periodo = "tudo" | "dia" | "semana" | "mes"
+
+// Função para formatar números grandes
+function NumeroFormatado({ valor }: { valor: number }) {
+  if (valor >= 1000000) {
+    return `${(valor / 1000000).toFixed(1)}M`
+  } else if (valor >= 1000) {
+    return `${(valor / 1000).toFixed(1)}K`
+  }
+  return valor.toString()
+}
+
 function getVisualizacoesPorMes(noticias: Noticia[]): [string, number][] {
   const meses: { [key: string]: number } = {}
   noticias.forEach(n => {
@@ -27,16 +39,6 @@ function getVisualizacoesPorMes(noticias: Noticia[]): [string, number][] {
   })
   // Ordenar por mês
   return Object.entries(meses).sort(([a], [b]) => a.localeCompare(b))
-}
-
-type Periodo = "tudo" | "dia" | "semana" | "mes"
-
-function NumeroFormatado({valor}:{valor:number}) {
-  const [num, setNum] = useState('')
-  useEffect(() => {
-    setNum(valor.toLocaleString('pt-BR'))
-  }, [valor])
-  return <>{num}</>
 }
 
 export default function AdminRelatorios() {
@@ -125,7 +127,7 @@ export default function AdminRelatorios() {
           </div>
 
           {/* Cards de resumo */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Total de Notícias</CardTitle>

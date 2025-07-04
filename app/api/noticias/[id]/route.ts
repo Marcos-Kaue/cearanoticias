@@ -73,4 +73,41 @@ export async function DELETE(request: NextRequest) {
     console.error('Erro inesperado ao deletar notícia:', err)
     return NextResponse.json({ error: 'Erro ao deletar notícia' }, { status: 500 })
   }
+}
+
+// PATCH - Incrementar visualizações
+export async function PATCH(request: NextRequest) {
+  const supabase = await createSupabaseServerClient()
+  try {
+    // Extrair o id da URL
+    const id = request.url.split('/').pop()
+    
+    // Buscar a notícia atual para pegar o número de visualizações
+    const { data: noticia, error: fetchError } = await supabase
+      .from('noticias')
+      .select('visualizacoes')
+      .eq('id', id)
+      .single()
+    
+    if (fetchError) throw fetchError
+    
+    // Incrementar visualizações
+    const novasVisualizacoes = (noticia.visualizacoes || 0) + 1
+    
+    const { data, error } = await supabase
+      .from('noticias')
+      .update({ 
+        visualizacoes: novasVisualizacoes,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+    
+    if (error) throw error
+    
+    return NextResponse.json({ success: true, visualizacoes: novasVisualizacoes })
+  } catch (error) {
+    console.error('Erro ao incrementar visualizações:', error)
+    return NextResponse.json({ error: 'Erro ao atualizar visualizações' }, { status: 500 })
+  }
 } 

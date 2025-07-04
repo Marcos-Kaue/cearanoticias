@@ -79,14 +79,24 @@ export async function getNoticiasPorCategoria(baseUrl: string, categoria: string
   }
 }
 
-// Busca notícia por ID
+// Busca uma notícia específica por ID
 export async function getNoticia(baseUrl: string, id: string): Promise<Noticia | null> {
   try {
-    const res = await fetch(`${baseUrl}/api/noticias/${id}`, { next: { revalidate: 60 } })
-    if (!res.ok) return null
-    return await res.json()
+    const res = await fetch(`${baseUrl}/api/noticias/${id}`, {
+      next: { revalidate: 30 }, // Cache mais curto para dados atualizados
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    })
+    if (!res.ok) {
+      console.error("Falha ao buscar notícia:", res.statusText)
+      return null
+    }
+    const data = await res.json()
+    return data
   } catch (error) {
-    console.error('Erro ao buscar notícia:', error)
+    console.error("Ocorreu um erro ao buscar notícia:", error)
     return null
   }
 } 
