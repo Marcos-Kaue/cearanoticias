@@ -12,6 +12,7 @@
     "check:noticias": "node scripts/check-noticias.js",
     "test:buckets": "node scripts/test-buckets.js",
     "test:visualizacoes": "node scripts/test-visualizacoes.js",
+    "verificar:variaveis": "node scripts/verificar-variaveis.js",
     "vercel-build": "rm -rf .next/types && next build"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.2",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
